@@ -19,6 +19,20 @@ router.get("/teste", (req, res) => {
     res.json({ mensagem: "API funcionando corretamente! V1.0.0" });
   });
 
+// Rota GET para obter todos os usuários
+router.get('/users', (req, res) => {
+    const query = 'SELECT * FROM users';
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar usuários:', err);
+            res.status(500).json({ error: 'Erro ao buscar usuários' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
 export default router;
 
 
