@@ -1,27 +1,37 @@
 import jwt from "jsonwebtoken";
 import { queryAsync } from "./dbService";
-import bcrypt from 'bcryptjs';  // Substitua bcrypt por bcryptjs
+import bcrypt from "bcryptjs";
 
 // Função para realizar o login
-export const login = async (usuario: string, senha: string) => {
+export const login = async (email: string, senha: string) => {
   try {
-    // Buscar o usuário no banco de dados
-    const result = await queryAsync("SELECT id, usuario, senha FROM usuarios WHERE usuario = ? OR email = ?", [usuario, usuario]);
+    // Buscar o usuário no banco de dados pelo email
+    const result = await queryAsync(
+      "SELECT id, email, senha_hash FROM usuarios WHERE email = $1",
+      [email]
+    );
 
     if (result.length === 0) {
       throw new Error("Usuário ou senha inválidos.");
     }
 
-    // Comparar a senha fornecida com a senha armazenada no banco
-    const isMatch = await bcrypt.compare(senha, result[0].senha);
+    const usuario = result[0];
+
+    // Comparar senha fornecida com o hash armazenado
+    const isMatch = await bcrypt.compare(senha, usuario.senha_hash);
     if (!isMatch) {
       throw new Error("Usuário ou senha inválidos.");
     }
 
     // Gerar o token JWT
-    const token = jwt.sign({ id: result[0].id }, process.env.JWT_SECRET || "secreta", { expiresIn: "1h" });
+    const token = jwt.sign(
+      { id: usuario.id },
+      process.env.JWT_SECRET || "secreta",
+      { expiresIn: "1h" }
+    );
+
     return token;
   } catch (error) {
-    throw new Error("Usuário ou senha inválidos." + error);
+    throw new Error("Usuário ou senha inválidos. " + error);
   }
 };

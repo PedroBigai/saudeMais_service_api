@@ -1,19 +1,14 @@
-import mysql from "mysql2/promise";
-import dotenv from "dotenv";
+// db.ts
+import postgres from 'postgres'
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
-// Criando a conexão com o banco de dados
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const connectionString = process.env.DATABASE_URL as string
 
+const pool = postgres(connectionString, {
+  // opções opcionais
+  ssl: 'require', // importante para conexão com Supabase em prod
+})
 
-
-export default pool;
+export default pool

@@ -1,29 +1,52 @@
 import { queryAsync } from "./dbService";
 
-// Função que verifica se o usuário existe no banco de dados
-export const loadUserData = async (usuarioId: number) => {
+interface UsuarioComMetrica {
+  nome: string;
+  email: string;
+  data_nascimento: string;
+  sexo: string;
+  objetivo: string;
+  tipo: string | null;
+  valor: string | null;
+  registrado_em: string | null;
+}
 
-    const query = `
-    SELECT u.usuario, u.email, u.data_nascimento, u.sexo, u.objetivo, 
-           m.altura, m.peso, m.biceps_direito, m.biceps_esquerdo, 
-           m.antebraco_direito, m.antebraco_esquerdo, m.coxa_direita, 
-           m.coxa_esquerda, m.panturilha_direita, m.panturilha_esquerda, 
-           m.cintura, m.data AS data_medida
+export const loadUserData = async (usuarioId: number) => {
+  const query = `
+    SELECT 
+      u.nome, 
+      u.email, 
+      u.data_nascimento, 
+      u.sexo, 
+      u.objetivo, 
+      m.tipo, 
+      m.valor, 
+      m.registrado_em
     FROM usuarios u
-    JOIN medidas m ON u.id = m.usuario_id
-    WHERE u.id = ?
-    ORDER BY m.data ASC
+    LEFT JOIN metricas m ON u.id = m.usuario_id
+    WHERE u.id = $1
+    ORDER BY m.registrado_em ASC
   `;
 
   try {
-    const results = await queryAsync(query, [usuarioId]);
+    const results = await queryAsync(query, [usuarioId]) as UsuarioComMetrica[];
 
-    // Se não houver nenhum dado, retorna null
-    if (results.length === 0) {
-      return null;
-    }
+    if (results.length === 0) return null;
 
-    return results; // Retorna os dados encontrados
+    const { nome, email, data_nascimento, sexo, objetivo } = results[0];
+
+    const metricas = results
+      .filter((r) => r.tipo && r.valor)
+      .map((r) => ({
+        tipo: r.tipo!,
+        valor: JSON.parse(r.valor!), // converte de JSON string para objeto
+        registrado_em: r.registrado_em!,
+      }));
+
+    return {
+      dados_usuario: { nome, email, data_nascimento, sexo, objetivo },
+      metricas,
+    };
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
     throw new Error("Erro ao buscar dados do usuário.");
