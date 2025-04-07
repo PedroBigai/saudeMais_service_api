@@ -3,9 +3,16 @@ import { checkUserMail } from "../controllers/getCheckEmail";
 import { loginController } from "../controllers/postLoginUser";
 import verificarToken from "../modules/authService";
 import { updateDataController } from "../controllers/patchUserData";
-import pool from "../utils/database";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
+
+import { Request, Response, NextFunction } from "express";
+// Fake middleware para testes (substitui o verificarToken)
+const mockToken = (req: Request, res: Response, next: NextFunction) => {
+    (req as any).usuarioId = 2; // Defina aqui o ID do usuário que quer simular
+    next();
+};
+  
 
 const router = Router();
 
@@ -18,23 +25,9 @@ router.post("/update/:type", verificarToken, updateDataController); // FUNCIONAN
 
 
 
-
-
-
-
-router.get("/teste", (req, res) => {
+router.get("/", (req, res) => {
     res.json({ mensagem: "API funcionando corretamente! sV1.0.0" });
 });
-
-router.get("/users", async (req, res) => {
-  try {
-    const rows = await pool`SELECT * FROM usuarios`
-    res.json(rows)
-  } catch (error) {
-    console.error("Erro ao buscar usuários:", error)
-    res.status(500).json({ error: "Erro interno no servidor" })
-  }
-})
 
   
 export default router;

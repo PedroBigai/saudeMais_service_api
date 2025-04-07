@@ -1,14 +1,16 @@
-// db.ts
-import postgres from 'postgres'
+import mysql from 'mysql2/promise'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-const connectionString = process.env.DATABASE_URL as string
-
-const pool = postgres(connectionString, {
-  // opções opcionais
-  ssl: 'require', // importante para conexão com Supabase em prod
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 })
 
 export default pool

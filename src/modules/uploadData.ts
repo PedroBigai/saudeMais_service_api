@@ -3,28 +3,64 @@ import { queryAsync } from "./dbService";
 export const uploadUserData = async (
   usuarioId: number,
   tipo: string,
-  valor: any // número, objeto, string, etc.
+  valor: any
 ) => {
-  const hoje = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-  const valorJson = JSON.stringify(valor);
+  const hoje = new Date().toISOString().split("T")[0];
 
+  // Verifica se já existe uma linha de métricas hoje
   const existente = await queryAsync(
-    "SELECT id FROM metricas WHERE usuario_id = $1 AND tipo = $2 AND DATE(registrado_em) = $3",
-    [usuarioId, tipo, hoje]
+    "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = ?",
+    [usuarioId, hoje]
   );
 
-  if (existente.length > 0) {
-    await queryAsync(
-      "UPDATE metricas SET valor = $1 WHERE id = $2",
-      [valorJson, existente[0].id]
-    );
+  const id = existente.length > 0 ? existente[0].id : null;
+
+  // mapeia os tipos diretamente para colunas
+  const colunasSimples = [
+    "altura",
+    "peso",
+    "imc",
+    "gordura",
+    "musculo",
+    "agua",
+    "calorias_consumido",
+    "calorias_meta",
+    "hidratacao_consumido",
+    "hidratacao_meta",
+    "sono_tempo_descanso",
+    "sono_qualidade"
+  ];
+
+  const colunasJson = [
+    "medidas_corporais",
+    "dieta",
+    "exercicios"
+  ];
+
+  if (id) {
+    // UPDATE
+    if (colunasSimples.includes(tipo)) {
+      await queryAsync(
+        `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
+        [valor, id]
+      );
+    } else if (colunasJson.includes(tipo)) {
+      await queryAsync(
+        `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
+        [JSON.stringify(valor), id]
+      );
+    } else {
+      return { mensagem: `Tipo de métrica '${tipo}' não reconhecido.` };
+    }
+
     return { mensagem: `Métrica de ${tipo} atualizada.` };
+  } else {
+    // INSERT novo com apenas essa métrica preenchida
+    let query = `INSERT INTO metricas (usuario_id, registrado_em, ${tipo}) VALUES (?, NOW(), ?)`;
+    const valorFinal = colunasJson.includes(tipo) ? JSON.stringify(valor) : valor;
+
+    await queryAsync(query, [usuarioId, valorFinal]);
+
+    return { mensagem: `Métrica de ${tipo} registrada.` };
   }
-
-  await queryAsync(
-    "INSERT INTO metricas (usuario_id, tipo, valor, registrado_em) VALUES ($1, $2, $3, NOW())",
-    [usuarioId, tipo, valorJson]
-  );
-
-  return { mensagem: `Métrica de ${tipo} registrada.` };
 };

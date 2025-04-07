@@ -17,7 +17,7 @@ export const setUser = async ({
 }: UsuarioRequest) => {
   try {
     // Verifica se o e-mail já existe
-    const queryEmail = "SELECT id FROM usuarios WHERE email = $1"
+    const queryEmail = "SELECT id FROM users WHERE email = ?"
     const resultEmail = await queryAsync(queryEmail, [email])
 
     if (resultEmail.length > 0) {
@@ -27,13 +27,12 @@ export const setUser = async ({
     // Criptografa a senha
     const hashedPassword = await bcrypt.hash(senha, 10)
 
-    // Insere usuário com novos campos
+    // Insere usuário
     const insertUser = `
-      INSERT INTO usuarios (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo)
-      VALUES ($1, $2, $3, NOW(), $4, $5, $6)
-      RETURNING id
+      INSERT INTO users (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo)
+      VALUES (?, ?, ?, NOW(), ?, ?, ?)
     `
-    const result = await queryAsync(insertUser, [
+    const insertResult: any = await queryAsync(insertUser, [
       nome,
       email,
       hashedPassword,
@@ -41,21 +40,83 @@ export const setUser = async ({
       nascimento,
       objetivo
     ])
-    const usuarioId = result[0].id
+    const usuarioId = insertResult.insertId
 
-    // Insere métrica de altura
-    await queryAsync(
-      "INSERT INTO metricas (usuario_id, tipo, valor, registrado_em) VALUES ($1, $2, $3, NOW())",
-      [usuarioId, "altura", JSON.stringify({ altura })]
-    )
+    // Cálculo do IMC
+const imc = peso / (altura / 100) ** 2;
 
-    // Insere métrica de peso
-    await queryAsync(
-      "INSERT INTO metricas (usuario_id, tipo, valor, registrado_em) VALUES ($1, $2, $3, NOW())",
-      [usuarioId, "peso", JSON.stringify({ peso })]
-    )
+// Cálculo da meta de hidratação (35 ml por kg)
+const hidratacaoMeta = Math.round(peso * 35);
+
+// Meta calórica simples com base no objetivo
+const caloriasMeta =
+  objetivo === "1" ? 2200 :
+  objetivo === "2" ? 2000 :
+  1800;
+
+  const metricas = {
+    imc: parseFloat(imc.toFixed(2)),
+    gordura: 0,
+    musculo: 0,
+    agua: 0,
+    calorias_consumido: 0,
+    calorias_meta: caloriasMeta,
+    hidratacao_consumido: 0,
+    hidratacao_meta: hidratacaoMeta,
+    sono_tempo_descanso: null,
+    sono_qualidade: null,
+    dieta: {
+      pratos: [],
+      dias_da_semana: []
+    },
+    exercicios: {
+      exercicios: []
+    },
+    medidas_corporais: {
+      biceps_direito: null,
+      biceps_esquerdo: null,
+      antebraco_direito: null,
+      antebraco_esquerdo: null,
+      coxa_direita: null,
+      coxa_esquerda: null,
+      panturrilha_direita: null,
+      panturrilha_esquerda: null,
+      cintura: null
+    }
+  }
+
+
+    // Insere todas as métricas em uma única linha
+    await queryAsync(`
+      INSERT INTO metricas (
+        usuario_id, altura, peso,
+        imc, gordura, musculo, agua,
+        calorias_consumido, calorias_meta,
+        hidratacao_consumido, hidratacao_meta,
+        sono_tempo_descanso, sono_qualidade,
+        dieta, exercicios, medidas_corporais
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      usuarioId,
+      altura,
+      peso,
+      metricas.imc,
+      metricas.gordura,
+      metricas.musculo,
+      metricas.agua,
+      metricas.calorias_consumido,
+      metricas.calorias_meta,
+      metricas.hidratacao_consumido,
+      metricas.hidratacao_meta,
+      metricas.sono_tempo_descanso,
+      metricas.sono_qualidade,
+      JSON.stringify(metricas.dieta),
+      JSON.stringify(metricas.exercicios),
+      JSON.stringify(metricas.medidas_corporais)
+    ])
 
     return { success: true }
+
   } catch (error) {
     console.error("Erro ao processar cadastro:", error)
     throw new Error("Erro ao processar o cadastro.")
