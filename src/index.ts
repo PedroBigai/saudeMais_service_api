@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 createTables()
 
 // Agendar execução diária às 00:05 da manhã
-cron.schedule("23 20 * * *", async () => {
+cron.schedule("05 00 * * *", async () => {
   console.log("🕐 Executando replicação de métricas...");
   try {
     const resultado = await updateMetricsTable();
