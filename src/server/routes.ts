@@ -5,8 +5,9 @@ import verificarToken from "../modules/authService";
 import { updateDataController } from "../controllers/patchUserData";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
-
 import { Request, Response, NextFunction } from "express";
+
+
 // Fake middleware para testes (substitui o verificarToken)
 const mockToken = (req: Request, res: Response, next: NextFunction) => {
     (req as any).usuarioId = 2; // Defina aqui o ID do usuário que quer simular
