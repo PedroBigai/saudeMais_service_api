@@ -2,25 +2,42 @@
 import { Request, Response } from 'express';
 import { setUser } from '../modules/setUser';
 
-export const cadastrarUser = async (req: Request, res: Response) => {
-  const { usuario, senha, confirmarSenha, email, altura, peso, data, nascimento, sexo, objetivo } = req.body;
+export const cadastrarUser = async (req: Request, res: Response): Promise<any> => {
+  const {
+    nome,
+    senha,
+    email,
+    altura,
+    peso,
+    nascimento,
+    sexo,
+    objetivo
+  } = req.body;
 
-  if (senha !== confirmarSenha) {
-    res.status(400).send("As senhas não coincidem.");
+  // Verificação básica
+  if (!nome || !senha || !email) {
+    return res.status(400).send("Campos obrigatórios faltando.");
   }
 
   try {
     const resultado = await setUser({
-      usuario, senha, email, altura, peso, data, nascimento, sexo, objetivo
+      nome,
+      senha,
+      email,
+      altura: Number(altura),
+      peso: Number(peso),
+      nascimento,
+      sexo,
+      objetivo
     });
-    
+
     if (resultado.success) {
-      res.status(200).send("Cadastro e medidas salvas com sucesso!");
+      return res.status(200).send("Cadastro e métricas salvas com sucesso!");
     } else {
-      res.status(400).send(resultado.message);
+      return res.status(400).send(resultado.message);
     }
   } catch (error) {
     console.error("Erro ao processar cadastro:", error);
-    res.status(500).send("Erro ao processar o cadastro.");
+    return res.status(500).send("Erro ao processar o cadastro.");
   }
 };

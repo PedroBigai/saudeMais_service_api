@@ -1,55 +1,124 @@
-// src/services/usuarioService.ts
-import bcrypt from 'bcrypt';
-import { queryAsync } from './dbService';
+import bcrypt from 'bcrypt'
+import { queryAsync } from './dbService'
 
 interface UsuarioRequest {
-  usuario: string;
-  senha: string;
-  email: string;
-  altura: number;
-  peso: number;
-  data: string;
-  nascimento: string;
-  sexo: string;
-  objetivo: string;
+  nome: string
+  senha: string
+  email: string
+  altura: number
+  peso: number
+  nascimento: string
+  sexo: string
+  objetivo: string
 }
 
 export const setUser = async ({
-  usuario, senha, email, altura, peso, data, nascimento, sexo, objetivo
+  nome, senha, email, altura, peso, nascimento, sexo, objetivo
 }: UsuarioRequest) => {
   try {
-    // Verificar se o usuário já existe
-    const queryUsuario = "SELECT id FROM usuarios WHERE usuario = ?";
-    const resultUsuario = await queryAsync(queryUsuario, [usuario]);
-
-    if (resultUsuario.length > 0) {
-      return { success: false, message: "Usuário já existe." };
-    }
-
-    // Verificar se o e-mail já existe
-    const queryEmail = "SELECT id FROM usuarios WHERE email = ?";
-    const resultEmail = await queryAsync(queryEmail, [email]);
+    // Verifica se o e-mail já existe
+    const queryEmail = "SELECT id FROM users WHERE email = ?"
+    const resultEmail = await queryAsync(queryEmail, [email])
 
     if (resultEmail.length > 0) {
-      return { success: false, message: "E-mail já cadastrado." };
+      return { success: false, message: "E-mail já cadastrado." }
     }
 
-    // Criptografar a senha
-    const hashedPassword = await bcrypt.hash(senha, 10);
+    // Criptografa a senha
+    const hashedPassword = await bcrypt.hash(senha, 10)
 
-    // Inserir usuário no banco de dados
-    const queryCadastro = "INSERT INTO usuarios (usuario, senha, email, data_nascimento, sexo, objetivo) VALUES (?, ?, ?, ?, ?, ?)";
-    const resultCadastro = await queryAsync(queryCadastro, [usuario, hashedPassword, email, nascimento, sexo, objetivo]);
+    // Insere usuário
+    const insertUser = `
+      INSERT INTO users (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo)
+      VALUES (?, ?, ?, NOW(), ?, ?, ?)
+    `
+    const insertResult: any = await queryAsync(insertUser, [
+      nome,
+      email,
+      hashedPassword,
+      sexo,
+      nascimento,
+      objetivo
+    ])
+    const usuarioId = insertResult.insertId
 
-    const usuarioId = resultCadastro.insertId;
+    // Cálculo do IMC
+const imc = peso / (altura / 100) ** 2;
 
-    // Inserir medidas no banco de dados
-    const queryMedidas = "INSERT INTO medidas (usuario_id, altura, peso, data) VALUES (?, ?, ?, ?)";
-    await queryAsync(queryMedidas, [usuarioId, altura, peso, data]);
+// Cálculo da meta de hidratação (35 ml por kg)
+const hidratacaoMeta = Math.round(peso * 35);
 
-    return { success: true };
-  } catch (error) {
-    console.error("Erro ao processar cadastro:", error);
-    throw new Error("Erro ao processar o cadastro.");
+// Meta calórica simples com base no objetivo
+const caloriasMeta =
+  objetivo === "1" ? 2200 :
+  objetivo === "2" ? 2000 :
+  1800;
+
+  const metricas = {
+    imc: parseFloat(imc.toFixed(2)),
+    gordura: 0,
+    musculo: 0,
+    agua: 0,
+    calorias_consumido: 0,
+    calorias_meta: caloriasMeta,
+    hidratacao_consumido: 0,
+    hidratacao_meta: hidratacaoMeta,
+    sono_tempo_descanso: null,
+    sono_qualidade: null,
+    dieta: {
+      pratos: [],
+      dias_da_semana: []
+    },
+    exercicios: {
+      exercicios: []
+    },
+    medidas_corporais: {
+      biceps_direito: null,
+      biceps_esquerdo: null,
+      antebraco_direito: null,
+      antebraco_esquerdo: null,
+      coxa_direita: null,
+      coxa_esquerda: null,
+      panturrilha_direita: null,
+      panturrilha_esquerda: null,
+      cintura: null
+    }
   }
-};
+
+
+    // Insere todas as métricas em uma única linha
+    await queryAsync(`
+      INSERT INTO metricas (
+        usuario_id, altura, peso,
+        imc, gordura, musculo, agua,
+        calorias_consumido, calorias_meta,
+        hidratacao_consumido, hidratacao_meta,
+        sono_tempo_descanso, sono_qualidade,
+        dieta, exercicios, medidas_corporais
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      usuarioId,
+      altura,
+      peso,
+      metricas.imc,
+      metricas.gordura,
+      metricas.musculo,
+      metricas.agua,
+      metricas.calorias_consumido,
+      metricas.calorias_meta,
+      metricas.hidratacao_consumido,
+      metricas.hidratacao_meta,
+      metricas.sono_tempo_descanso,
+      metricas.sono_qualidade,
+      JSON.stringify(metricas.dieta),
+      JSON.stringify(metricas.exercicios),
+      JSON.stringify(metricas.medidas_corporais)
+    ])
+
+    return { success: true }
+
+  } catch (error) {
+    console.error("Erro ao processar cadastro:", error)
+    throw new Error("Erro ao processar o cadastro.")
+  }
+}

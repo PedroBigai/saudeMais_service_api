@@ -1,25 +1,66 @@
 import { queryAsync } from "./dbService";
 
-// Função para atualizar ou inserir o peso
-export const uploadUserData = async (usuarioId: number, data: string, peso: number, altura?: number) => {
-  let alturaAtual = altura;
+export const uploadUserData = async (
+  usuarioId: number,
+  tipo: string,
+  valor: any
+) => {
+  const hoje = new Date().toISOString().split("T")[0];
 
-  // Se não passar altura, pega a última altura registrada
-  if (!altura) {
-    const alturaRes = await queryAsync("SELECT altura FROM medidas WHERE usuario_id = ? ORDER BY data DESC LIMIT 1", [usuarioId]);
-    if (alturaRes.length > 0) alturaAtual = alturaRes[0].altura;
+  // Verifica se já existe uma linha de métricas hoje
+  const existente = await queryAsync(
+    "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = ?",
+    [usuarioId, hoje]
+  );
+
+  const id = existente.length > 0 ? existente[0].id : null;
+
+  // mapeia os tipos diretamente para colunas
+  const colunasSimples = [
+    "altura",
+    "peso",
+    "imc",
+    "gordura",
+    "musculo",
+    "agua",
+    "calorias_consumido",
+    "calorias_meta",
+    "hidratacao_consumido",
+    "hidratacao_meta",
+    "sono_tempo_descanso",
+    "sono_qualidade"
+  ];
+
+  const colunasJson = [
+    "medidas_corporais",
+    "dieta",
+    "exercicios"
+  ];
+
+  if (id) {
+    // UPDATE
+    if (colunasSimples.includes(tipo)) {
+      await queryAsync(
+        `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
+        [valor, id]
+      );
+    } else if (colunasJson.includes(tipo)) {
+      await queryAsync(
+        `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
+        [JSON.stringify(valor), id]
+      );
+    } else {
+      return { mensagem: `Tipo de métrica '${tipo}' não reconhecido.` };
+    }
+
+    return { mensagem: `Métrica de ${tipo} atualizada.` };
+  } else {
+    // INSERT novo com apenas essa métrica preenchida
+    let query = `INSERT INTO metricas (usuario_id, registrado_em, ${tipo}) VALUES (?, NOW(), ?)`;
+    const valorFinal = colunasJson.includes(tipo) ? JSON.stringify(valor) : valor;
+
+    await queryAsync(query, [usuarioId, valorFinal]);
+
+    return { mensagem: `Métrica de ${tipo} registrada.` };
   }
-
-  // Verificar se já existe um registro para o usuário e data
-  const registroExistente = await queryAsync("SELECT id FROM medidas WHERE usuario_id = ? AND data = ?", [usuarioId, data]);
-  
-  if (registroExistente.length > 0) {
-    // Atualizar o registro existente
-    await queryAsync("UPDATE medidas SET peso = ?, altura = ? WHERE id = ?", [peso, alturaAtual, registroExistente[0].id]);
-    return { mensagem: "Peso atualizado com sucesso." };
-  }
-
-  // Caso não exista, criar um novo registro
-  await queryAsync("INSERT INTO medidas (usuario_id, altura, peso, data) VALUES (?, ?, ?, ?)", [usuarioId, alturaAtual, peso, data]);
-  return { mensagem: "Novo registro de peso adicionado." };
 };
