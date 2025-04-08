@@ -24,12 +24,6 @@ interface Metricas {
     consumido: number;
     meta: number;
   };
-  sono: {
-    tempo_descanso: number | null;
-    qualidade: string | null;
-  };
-  dieta: any;
-  exercicios: any;
   medidas_corporais: any;
 }
 
@@ -53,13 +47,9 @@ export const loadUserData = async (usuarioId: number) => {
       m.calorias_meta,
       m.hidratacao_consumido,
       m.hidratacao_meta,
-      m.sono_tempo_descanso,
-      m.sono_qualidade,
-      m.dieta,
-      m.exercicios,
       m.medidas_corporais
 
-    FROM users u
+    FROM usuarios u
     LEFT JOIN metricas m ON u.id = m.usuario_id
     WHERE u.id = ?
     ORDER BY m.registrado_em DESC
@@ -97,12 +87,6 @@ export const loadUserData = async (usuarioId: number) => {
         consumido: row.hidratacao_consumido,
         meta: row.hidratacao_meta,
       },
-      sono: {
-        tempo_descanso: row.sono_tempo_descanso,
-        qualidade: row.sono_qualidade,
-      },
-      dieta: typeof row.dieta === 'string' ? JSON.parse(row.dieta) : row.dieta,
-      exercicios: typeof row.exercicios === 'string' ? JSON.parse(row.exercicios) : row.exercicios,
       medidas_corporais:
         typeof row.medidas_corporais === 'string'
           ? JSON.parse(row.medidas_corporais)

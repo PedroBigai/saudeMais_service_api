@@ -3,9 +3,9 @@ import pool from "../utils/database"
 
 export async function createTables() {
   try {
-    // Tabela users
+    // Tabela usuarios
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE IF NOT EXISTS usuarios (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -52,13 +52,7 @@ export async function createTables() {
       hidratacao_consumido INT,
       hidratacao_meta INT,
 
-      sono_tempo_descanso INT,
-      sono_qualidade VARCHAR(50),
-
-      dieta JSON,
-      exercicios JSON,
-
-      FOREIGN KEY (usuario_id) REFERENCES users(id) ON DELETE CASCADE
+      FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
     );
     `)
 

@@ -2,7 +2,7 @@ import { queryAsync } from "./dbService";
 
 export const verifyEmail = async (email: string) => {
   try {
-    const result = await queryAsync("SELECT email FROM users WHERE email = ?", [email]);
+    const result = await queryAsync("SELECT email FROM usuarios WHERE email = ?", [email]);
     return result.length === 0;  
   } catch (error) {
     throw new Error("Erro ao verificar email");

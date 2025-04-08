@@ -7,7 +7,7 @@ export const login = async (email: string, senha: string) => {
   try {
     // Buscar o usuário no banco de dados pelo email
     const result = await queryAsync(
-      "SELECT id, email, senha_hash FROM users WHERE email = ?",
+      "SELECT id, email, senha_hash FROM usuarios WHERE email = ?",
       [email]
     );
 

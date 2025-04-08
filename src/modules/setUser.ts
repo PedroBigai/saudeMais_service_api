@@ -17,7 +17,7 @@ export const setUser = async ({
 }: UsuarioRequest) => {
   try {
     // Verifica se o e-mail já existe
-    const queryEmail = "SELECT id FROM users WHERE email = ?"
+    const queryEmail = "SELECT id FROM usuarios WHERE email = ?"
     const resultEmail = await queryAsync(queryEmail, [email])
 
     if (resultEmail.length > 0) {
@@ -29,7 +29,7 @@ export const setUser = async ({
 
     // Insere usuário
     const insertUser = `
-      INSERT INTO users (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo)
+      INSERT INTO usuarios (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo)
       VALUES (?, ?, ?, NOW(), ?, ?, ?)
     `
     const insertResult: any = await queryAsync(insertUser, [
@@ -63,15 +63,6 @@ const caloriasMeta =
     calorias_meta: caloriasMeta,
     hidratacao_consumido: 0,
     hidratacao_meta: hidratacaoMeta,
-    sono_tempo_descanso: null,
-    sono_qualidade: null,
-    dieta: {
-      pratos: [],
-      dias_da_semana: []
-    },
-    exercicios: {
-      exercicios: []
-    },
     medidas_corporais: {
       biceps_direito: null,
       biceps_esquerdo: null,
@@ -92,10 +83,8 @@ const caloriasMeta =
         usuario_id, altura, peso,
         imc, gordura, musculo, agua,
         calorias_consumido, calorias_meta,
-        hidratacao_consumido, hidratacao_meta,
-        sono_tempo_descanso, sono_qualidade,
-        dieta, exercicios, medidas_corporais
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        hidratacao_consumido, hidratacao_meta, medidas_corporais
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       usuarioId,
       altura,
@@ -108,10 +97,6 @@ const caloriasMeta =
       metricas.calorias_meta,
       metricas.hidratacao_consumido,
       metricas.hidratacao_meta,
-      metricas.sono_tempo_descanso,
-      metricas.sono_qualidade,
-      JSON.stringify(metricas.dieta),
-      JSON.stringify(metricas.exercicios),
       JSON.stringify(metricas.medidas_corporais)
     ])
 

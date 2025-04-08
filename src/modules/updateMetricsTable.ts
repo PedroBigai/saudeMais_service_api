@@ -4,9 +4,9 @@ export const updateMetricsTable = async () => {
   const hoje = new Date().toISOString().split("T")[0];
 
   // 1. Pega todos os usuários
-  const users = await queryAsync("SELECT id FROM users");
+  const usuarios = await queryAsync("SELECT id FROM usuarios");
 
-  for (const usuario of users) {
+  for (const usuario of usuarios) {
     const usuarioId = usuario.id;
 
     // 2. Verifica se já existe uma métrica para hoje
@@ -24,8 +24,7 @@ export const updateMetricsTable = async () => {
         altura, peso, imc, gordura, musculo, agua,
         calorias_consumido, calorias_meta,
         hidratacao_consumido, hidratacao_meta,
-        sono_tempo_descanso, sono_qualidade,
-        dieta, exercicios, medidas_corporais
+         medidas_corporais
       FROM metricas
       WHERE usuario_id = ? AND DATE(registrado_em) < ?
       ORDER BY registrado_em DESC
@@ -43,18 +42,15 @@ export const updateMetricsTable = async () => {
           usuario_id, registrado_em,
           altura, peso, imc, gordura, musculo, agua,
           calorias_consumido, calorias_meta,
-          hidratacao_consumido, hidratacao_meta,
-          sono_tempo_descanso, sono_qualidade,
-          dieta, exercicios, medidas_corporais
-        ) VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          hidratacao_consumido, hidratacao_meta, medidas_corporais
+        ) VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
           usuarioId,
           u.altura, u.peso, u.imc, u.gordura, u.musculo, u.agua,
           u.calorias_consumido, u.calorias_meta,
           u.hidratacao_consumido, u.hidratacao_meta,
-          u.sono_tempo_descanso, u.sono_qualidade,
-          u.dieta, u.exercicios, u.medidas_corporais
+         u.medidas_corporais
         ]
       );
     }

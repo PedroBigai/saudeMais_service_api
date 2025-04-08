@@ -27,14 +27,10 @@ export const uploadUserData = async (
     "calorias_meta",
     "hidratacao_consumido",
     "hidratacao_meta",
-    "sono_tempo_descanso",
-    "sono_qualidade"
   ];
 
   const colunasJson = [
     "medidas_corporais",
-    "dieta",
-    "exercicios"
   ];
 
   if (id) {
