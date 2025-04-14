@@ -24,10 +24,8 @@ router.post("/login", loginController) // FUNCIONANDO
 router.get('/dados-usuario', verificarToken, getUserData); // FUNCIONANDO
 router.post("/update/:type", verificarToken, updateDataController); // FUNCIONANDO
 
-
-
 router.get("/", (req, res) => {
-    res.json({ mensagem: "API funcionando corretamente! sV1.0.0" });
+    res.json({ mensagem: "API funcionando corretamente! V1.0.0" });
 });
 
   

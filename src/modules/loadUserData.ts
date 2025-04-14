@@ -53,7 +53,6 @@ export const loadUserData = async (usuarioId: number) => {
     LEFT JOIN metricas m ON u.id = m.usuario_id
     WHERE u.id = ?
     ORDER BY m.registrado_em DESC
-    LIMIT 1
   `;
 
   try {
@@ -71,7 +70,7 @@ export const loadUserData = async (usuarioId: number) => {
       objetivo: row.objetivo,
     };
 
-    const metricas: Metricas = {
+    const metricas: Metricas[] = results.map((row: any) => ({
       registrado_em: row.registrado_em,
       altura: row.altura,
       peso: row.peso,
@@ -88,10 +87,11 @@ export const loadUserData = async (usuarioId: number) => {
         meta: row.hidratacao_meta,
       },
       medidas_corporais:
-        typeof row.medidas_corporais === 'string'
+        typeof row.medidas_corporais === "string"
           ? JSON.parse(row.medidas_corporais)
           : row.medidas_corporais,
-    };
+    }));
+    
 
     return {
       dados_usuario,

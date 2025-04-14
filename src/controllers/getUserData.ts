@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { loadUserData } from "../modules/loadUserData";
 import { AuthRequest } from "../interfaces/AuthRequest";
+import { updateMetricsTable } from "../modules/updateMetricsTable";
 
 export const getUserData = async (req: AuthRequest, res: Response): Promise<any> => {
   const usuarioId = Number(req.usuarioId);
@@ -9,14 +10,14 @@ export const getUserData = async (req: AuthRequest, res: Response): Promise<any>
     return res.status(400).send("ID de usuário inválido.");
   }
 
+  await updateMetricsTable(usuarioId); // Atualiza a tabela de métricas para o usuário
+
   try {
     const data = await loadUserData(usuarioId);
 
     if (!data) {
       return res.status(404).send("Nenhum dado encontrado para o usuário.");
     }
-
-    console.log(data)
 
     res.status(200).send(data);
   } catch (error) {
