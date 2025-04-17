@@ -5,6 +5,7 @@ import verificarToken from "../modules/authService";
 import { updateDataController } from "../controllers/patchUserData";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
+import { obterDataAtual } from "../controllers/dateController";
 import { Request, Response, NextFunction } from "express";
 
 
@@ -22,6 +23,7 @@ router.post("/cadastro", cadastrarUser); // FUNCIONANDO
 router.post("/login", loginController) // FUNCIONANDO
 
 router.get('/dados-usuario', verificarToken, getUserData); // FUNCIONANDO
+router.get("/data-atual", obterDataAtual);
 router.post("/update/:type", verificarToken, updateDataController); // FUNCIONANDO
 
 router.get("/", (req, res) => {

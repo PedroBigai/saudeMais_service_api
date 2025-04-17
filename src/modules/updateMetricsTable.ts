@@ -1,19 +1,25 @@
 import { queryAsync } from "./dbService";
 
 export const updateMetricsTable = async (usuarioId: number) => {
-  const hoje = new Date().toISOString().split("T")[0];
+  // Agora no fuso horário do Brasil (UTC-3)
+  const agora = new Date();
+  const agoraBrasil = new Date(agora.getTime() - 3 * 60 * 60 * 1000);
 
-  // 1. Verifica se já existe uma métrica para hoje
+  const dataCompletaBrasil = agoraBrasil.toISOString().slice(0, 19).replace("T", " "); // "YYYY-MM-DD HH:MM:SS"
+  const dataHoje = dataCompletaBrasil.split(" ")[0]; // Só a parte da data "YYYY-MM-DD"
+
+  // Verifica se JÁ EXISTE ALGUM registro para o mesmo dia (independente do horário)
   const existenteHoje = await queryAsync(
     "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = ?",
-    [usuarioId, hoje]
+    [usuarioId, dataHoje]
   );
 
+  // Se já existe, então **não cria de novo**
   if (existenteHoje.length > 0) {
     return { sucesso: false, mensagem: "Já existe métrica registrada para hoje." };
   }
 
-  // 2. Pega a última linha registrada ANTES de hoje
+  // Busca o último registro anterior ao dia atual
   const ultima = await queryAsync(
     `
     SELECT 
@@ -26,7 +32,7 @@ export const updateMetricsTable = async (usuarioId: number) => {
     ORDER BY registrado_em DESC
     LIMIT 1
     `,
-    [usuarioId, hoje]
+    [usuarioId, dataHoje]
   );
 
   if (ultima.length > 0) {
@@ -39,10 +45,11 @@ export const updateMetricsTable = async (usuarioId: number) => {
         altura, peso, imc, gordura, musculo, agua,
         calorias_consumido, calorias_meta,
         hidratacao_consumido, hidratacao_meta, medidas_corporais
-      ) VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         usuarioId,
+        dataCompletaBrasil, // agora com horário
         u.altura, u.peso, u.imc, u.gordura, u.musculo, u.agua,
         u.calorias_consumido, u.calorias_meta,
         u.hidratacao_consumido, u.hidratacao_meta,
@@ -50,7 +57,7 @@ export const updateMetricsTable = async (usuarioId: number) => {
       ]
     );
 
-    return { sucesso: true, mensagem: "Métricas clonadas para o novo dia." };
+    return { sucesso: true, mensagem: "Métricas clonadas com horário registrado." };
   }
 
   return { sucesso: false, mensagem: "Nenhuma métrica anterior encontrada para clonar." };
