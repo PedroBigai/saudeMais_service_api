@@ -7,7 +7,7 @@ export const updateDataController = async (req: AuthRequest, res: Response):Prom
   const { valor } = req.body;
   const usuarioId = Number(req.usuarioId);
 
-  if (!type || !valor || !usuarioId) {
+  if (!type || valor === undefined || usuarioId === undefined) {
     return res.status(400).send("Parâmetros obrigatórios ausentes.");
   }
 

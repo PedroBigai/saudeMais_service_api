@@ -9,8 +9,8 @@ export const uploadUserData = async (
 
   // Verifica se já existe uma linha de métricas hoje
   const existente = await queryAsync(
-    "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = ?",
-    [usuarioId, hoje]
+    "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = CURDATE()",
+    [usuarioId]
   );
 
   const id = existente.length > 0 ? existente[0].id : null;
