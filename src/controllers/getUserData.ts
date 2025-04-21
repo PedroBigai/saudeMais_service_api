@@ -10,9 +10,9 @@ export const getUserData = async (req: AuthRequest, res: Response): Promise<any>
     return res.status(400).send("ID de usuário inválido.");
   }
 
-  await updateMetricsTable(usuarioId); // Atualiza a tabela de métricas para o usuário
 
   try {
+    await updateMetricsTable(usuarioId); // Atualiza a tabela de métricas para o usuário
     const data = await loadUserData(usuarioId);
 
     if (!data) {

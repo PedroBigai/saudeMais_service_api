@@ -7,6 +7,7 @@ import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
 import { obterDataAtual } from "../controllers/dateController";
 import { Request, Response, NextFunction } from "express";
+import { postChatSaudeMais } from "../controllers/postChatSaudeMais";
 
 
 // Fake middleware para testes (substitui o verificarToken)
@@ -25,10 +26,15 @@ router.post("/login", loginController) // FUNCIONANDO
 router.get('/dados-usuario', verificarToken, getUserData); // FUNCIONANDO
 router.get("/data-atual", obterDataAtual);
 router.post("/update/:type", verificarToken, updateDataController); // FUNCIONANDO
+router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
+
+
 
 router.get("/", (req, res) => {
     res.json({ mensagem: "API funcionando corretamente! V1.0.0" });
 });
+
+
 
   
 export default router;
