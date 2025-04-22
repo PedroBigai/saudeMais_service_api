@@ -1,20 +1,5 @@
 import { queryAsync } from "./dbService";
-
-// Simulação de cálculo de meta calórica e de hidratação
-// Esses cálculos são fictícios – adapte com base na lógica do seu sistema!
-function calcularMetaCalorias(peso: number, altura: number, sexo: string, objetivo: number): number {
-  // Fórmula genérica simplificada
-  const tmb = sexo === "masculino"
-    ? 66 + (13.75 * peso) + (5 * altura) - (6.75 * 25) // idade fixada como 25 pra exemplo
-    : 655 + (9.56 * peso) + (1.85 * altura) - (4.68 * 25);
-  const fatorObjetivo = objetivo === 1 ? 0.8 : objetivo === 2 ? 1.0 : 1.2; // perder, manter, ganhar
-  return Math.round(tmb * fatorObjetivo);
-}
-
-function calcularMetaHidratacao(peso: number): number {
-  return peso * 35; // 35ml por kg
-}
-
+import { calcularIMC, calcularMetaCalorica, calcularMetaHidratacao } from "./setUser";
 
 export const updateMetricsTable = async (usuarioId: number) => {
   // Agora no fuso horário do Brasil (UTC-3)
@@ -54,9 +39,9 @@ export const updateMetricsTable = async (usuarioId: number) => {
   if (ultima.length > 0) {
     const u = ultima[0];
 
-    const novaCaloriasMeta = calcularMetaCalorias(u.peso, u.altura, "masculino", 2); // você pode buscar sexo e objetivo do usuário no banco
-    const novaHidratacaoMeta = calcularMetaHidratacao(u.peso);
-
+    const imcNovo = calcularIMC(u.peso, u.altura); // Recalcula o IMC com os dados mais recentes  
+    const metaHidratacaoNovo = calcularMetaHidratacao(u.peso); // Recalcula a meta de hidratação com os dados mais recentes 
+    const metaCaloriaNovo = calcularMetaCalorica(u.peso, u.altura, u.sexo, u.objetivo, u.nascimento); // Recalcula a meta calórica com os dados mais recentes
 
     await queryAsync(
       `
@@ -70,11 +55,11 @@ export const updateMetricsTable = async (usuarioId: number) => {
       [
         usuarioId,
         dataCompletaBrasil, // agora com horário
-        u.altura, u.peso, u.imc, u.gordura, u.musculo, u.agua,
+        u.altura, u.peso, imcNovo, u.gordura, u.musculo, u.agua,
         0,               // calorias_consumido zerado
-        novaCaloriasMeta,
+        metaCaloriaNovo, // nova meta calórica
         0,               // hidratacao_consumido zerado
-        novaHidratacaoMeta,
+        metaHidratacaoNovo,
         u.medidas_corporais
       ]
     );    
@@ -84,3 +69,4 @@ export const updateMetricsTable = async (usuarioId: number) => {
 
   return { sucesso: false, mensagem: "Nenhuma métrica anterior encontrada para clonar." };
 };
+
