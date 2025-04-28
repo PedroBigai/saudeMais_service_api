@@ -1,4 +1,5 @@
 import { queryAsync } from "./dbService";
+import { calcularStreak } from "./loadStreak";
 
 interface DadosUsuario {
   nome: string;
@@ -8,7 +9,7 @@ interface DadosUsuario {
   objetivo: string;
 }
 
-interface Metricas {
+export interface Metricas {
   registrado_em: string;
   altura: number | null;
   peso: number | null;
@@ -91,12 +92,18 @@ export const loadUserData = async (usuarioId: number) => {
           ? JSON.parse(row.medidas_corporais)
           : row.medidas_corporais,
     }));
-    
 
+     // Calcular streaks baseado nas métricas carregadas
+     const streakCalorias = calcularStreak(metricas, 'calorias');
+     const streakHidratacao = calcularStreak(metricas, 'hidratacao');
+    
     return {
       dados_usuario,
+      streakCalorias: streakCalorias,
+      streakHidratacao:streakHidratacao,
       metricas,
     };
+
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
     throw new Error("Erro ao buscar dados do usuário.");

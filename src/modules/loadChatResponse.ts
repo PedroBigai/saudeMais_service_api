@@ -37,6 +37,11 @@ export const loadChatResponse = async (userId: number, mensagem: string): Promis
 
                 Esses aqui são os dados do usuário:
                 ${JSON.stringify(userData, null, 2)}
+                const objetivos = {
+                  1: "Perca de peso",
+                  2: "Ganho de massa",
+                  3: "Manutenção do peso"
+                };
 
                 Você é um assistente virtual especializado em saúde. 
                 Seu papel é responder dúvidas de usuários sobre alimentação saudável, bem-estar, rotina de exercícios, sono, hidratação e outros temas relacionados à saúde de forma clara,
