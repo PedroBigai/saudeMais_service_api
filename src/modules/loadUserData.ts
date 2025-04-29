@@ -1,5 +1,4 @@
 import { queryAsync } from "./dbService";
-import { calcularStreak } from "./loadStreak";
 
 interface DadosUsuario {
   nome: string;
@@ -26,6 +25,8 @@ export interface Metricas {
     meta: number;
   };
   medidas_corporais: any;
+  streak_caloria: number
+  streak_hidratacao: number
 }
 
 export const loadUserData = async (usuarioId: number) => {
@@ -49,6 +50,8 @@ export const loadUserData = async (usuarioId: number) => {
       m.hidratacao_consumido,
       m.hidratacao_meta,
       m.medidas_corporais
+      m.streak_caloria,
+      m.streak_hidratacao
 
     FROM usuarios u
     LEFT JOIN metricas m ON u.id = m.usuario_id
@@ -91,16 +94,14 @@ export const loadUserData = async (usuarioId: number) => {
         typeof row.medidas_corporais === "string"
           ? JSON.parse(row.medidas_corporais)
           : row.medidas_corporais,
+      streak_caloria: row.streak_caloria,
+      streak_hidratacao: row.streak_hidratacao,
     }));
-
-     // Calcular streaks baseado nas métricas carregadas
-     const streakCalorias = calcularStreak(metricas, 'calorias');
-     const streakHidratacao = calcularStreak(metricas, 'hidratacao');
     
     return {
       dados_usuario,
-      streakCalorias: streakCalorias,
-      streakHidratacao:streakHidratacao,
+      streak_caloria: row.streak_caloria || 0,
+      streak_hidratacao: row.streak_hidratacao || 0,
       metricas,
     };
 

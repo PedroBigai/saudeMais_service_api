@@ -46,9 +46,10 @@ export async function createTables() {
           "cintura": null
         }'
       ),
-
+      streak_calorias INT DEFAULT 0,
       calorias_consumido INT,
       calorias_meta INT,
+      streak_hidratacao INT DEFAULT 0,
       hidratacao_consumido INT,
       hidratacao_meta INT,
 

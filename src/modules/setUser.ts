@@ -90,6 +90,8 @@ export const setUser = async ({
       gordura: 0,
       musculo: 0,
       agua: 0,
+      streak_calorias: 0,
+      streak_hidratacao: 0,
       calorias_consumido: 0,
       calorias_meta: caloriasMeta,
       hidratacao_consumido: 0,
@@ -115,7 +117,7 @@ export const setUser = async ({
         imc, gordura, musculo, agua,
         calorias_consumido, calorias_meta,
         hidratacao_consumido, hidratacao_meta, medidas_corporais
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       usuarioId,
       altura,
@@ -124,6 +126,8 @@ export const setUser = async ({
       metricas.gordura,
       metricas.musculo,
       metricas.agua,
+      0, // streak_calorias
+      0, // streak_hidratacao
       metricas.calorias_consumido,
       metricas.calorias_meta,
       metricas.hidratacao_consumido,
