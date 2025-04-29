@@ -49,7 +49,7 @@ export const loadUserData = async (usuarioId: number) => {
       m.calorias_meta,
       m.hidratacao_consumido,
       m.hidratacao_meta,
-      m.medidas_corporais
+      m.medidas_corporais,
       m.streak_caloria,
       m.streak_hidratacao
 
