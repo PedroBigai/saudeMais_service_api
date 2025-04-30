@@ -88,24 +88,6 @@ export const updateMetricsTable = async (usuarioId: number) => {
       ]
     );
 
-    console.log("Métricas clonadas com streak atualizado:", {
-      usuarioId,
-      registrado_em: dataCompletaBrasil,
-      altura: u.altura,
-      peso: u.peso,
-      imc: imcNovo,
-      gordura: u.gordura,
-      musculo: u.musculo,
-      agua: u.agua,
-      calorias_consumido: 0,
-      calorias_meta: metaCaloriaNovo,
-      hidratacao_consumido: 0,
-      hidratacao_meta: metaHidratacaoNovo,
-      medidas_corporais: u.medidas_corporais,
-      streak_calorias: novoStreakCalorias,
-      streak_hidratacao: novoStreakHidratacao
-    });
-
     return { sucesso: true, mensagem: "Métricas clonadas com horário registrado e streaks atualizados." };
   }
 

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
+import { updateMetricsData } from "../modules/updateMetricData";
 import { AuthRequest } from "../interfaces/AuthRequest";
-import { updateUserPessoalData } from "../modules/updateUserData";
 
-export const updateUserData = async (req: AuthRequest, res: Response):Promise<any> => {
+export const updateMetricsDataController = async (req: AuthRequest, res: Response):Promise<any> => {
   const { type } = req.params;
   const { valor } = req.body;
   const usuarioId = Number(req.usuarioId);
@@ -12,7 +12,7 @@ export const updateUserData = async (req: AuthRequest, res: Response):Promise<an
   }
 
   try {
-    const result = await updateUserPessoalData(usuarioId, type, valor);
+    const result = await updateMetricsData(usuarioId, type, valor);
     res.status(200).send(result.mensagem);
   } catch (error) {
     console.error("Erro ao atualizar métrica:", error);

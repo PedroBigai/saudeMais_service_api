@@ -6,6 +6,7 @@ interface DadosUsuario {
   data_nascimento: string;
   sexo: string;
   objetivo: string;
+  avatar: string;
 }
 
 export interface Metricas {
@@ -37,6 +38,7 @@ export const loadUserData = async (usuarioId: number) => {
       u.data_nascimento, 
       u.sexo, 
       u.objetivo,
+      u.avatar,
 
       m.registrado_em,
       m.altura,
@@ -72,6 +74,7 @@ export const loadUserData = async (usuarioId: number) => {
       data_nascimento: row.data_nascimento,
       sexo: row.sexo,
       objetivo: row.objetivo,
+      avatar: row.avatar,
     };
 
     const metricas: Metricas[] = results.map((row: any) => ({

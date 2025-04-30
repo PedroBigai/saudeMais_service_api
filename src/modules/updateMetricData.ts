@@ -1,6 +1,6 @@
 import { queryAsync } from "./dbService";
 
-export const uploadUserData = async (
+export const updateMetricsData = async (
   usuarioId: number,
   tipo: string,
   valor: any

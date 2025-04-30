@@ -68,8 +68,8 @@ export const setUser = async ({
 
     // Insere usuário
     const insertUser = `
-      INSERT INTO usuarios (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo)
-      VALUES (?, ?, ?, NOW(), ?, ?, ?)
+      INSERT INTO usuarios (nome, email, senha_hash, criado_em, sexo, data_nascimento, objetivo, avatar)
+      VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)
     `
     const insertResult: any = await queryAsync(insertUser, [
       nome,
@@ -77,7 +77,8 @@ export const setUser = async ({
       hashedPassword,
       sexo,
       nascimento,
-      objetivo
+      objetivo,
+      "default.png"
     ])
     const usuarioId = insertResult.insertId
 

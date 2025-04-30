@@ -2,12 +2,13 @@ import { Router } from "express";
 import { checkUserMail } from "../controllers/getCheckEmail";
 import { loginController } from "../controllers/postLoginUser";
 import verificarToken from "../modules/authService";
-import { updateDataController } from "../controllers/patchUserData";
+import { updateMetricsDataController } from "../controllers/patchMetricsData";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
 import { obterDataAtual } from "../controllers/dateController";
 import { Request, Response, NextFunction } from "express";
 import { postChatSaudeMais } from "../controllers/postChatSaudeMais";
+import { updateUserData } from "../controllers/patchUserData";
 
 
 // Fake middleware para testes (substitui o verificarToken)
@@ -25,7 +26,8 @@ router.post("/login", loginController) // FUNCIONANDO
 
 router.get('/dados-usuario', verificarToken, getUserData); // FUNCIONANDO
 router.get("/data-atual", obterDataAtual);
-router.post("/update/:type", verificarToken, updateDataController); // FUNCIONANDO
+router.post("/update/:type", verificarToken, updateMetricsDataController); // FUNCIONANDO
+router.post("/updateUserData/:type", verificarToken, updateUserData); // FUNCIONANDO
 router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
 
 
