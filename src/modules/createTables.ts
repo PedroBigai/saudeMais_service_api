@@ -14,6 +14,7 @@ export async function createTables() {
         sexo VARCHAR(50),
         data_nascimento DATE,
         objetivo TINYINT,
+        avatar VARCHAR(255) default '',
         CHECK (objetivo IN (1, 2, 3))
       );
     `)
@@ -46,7 +47,7 @@ export async function createTables() {
           "cintura": null
         }'
       ),
-      streak_calorias INT DEFAULT 0,
+      streak_caloria INT DEFAULT 0,
       calorias_consumido INT,
       calorias_meta INT,
       streak_hidratacao INT DEFAULT 0,

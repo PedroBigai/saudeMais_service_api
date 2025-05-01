@@ -10,6 +10,7 @@ interface UsuarioRequest {
   nascimento: string
   sexo: string
   objetivo: string
+  avatar?: string
 }
 
 export function calcularIMC(peso: number, altura: number): number {
@@ -91,7 +92,7 @@ export const setUser = async ({
       gordura: 0,
       musculo: 0,
       agua: 0,
-      streak_calorias: 0,
+      streak_caloria: 0,
       streak_hidratacao: 0,
       calorias_consumido: 0,
       calorias_meta: caloriasMeta,
@@ -116,6 +117,7 @@ export const setUser = async ({
       INSERT INTO metricas (
         usuario_id, altura, peso,
         imc, gordura, musculo, agua,
+        streak_caloria, streak_hidratacao,
         calorias_consumido, calorias_meta,
         hidratacao_consumido, hidratacao_meta, medidas_corporais
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -127,7 +129,7 @@ export const setUser = async ({
       metricas.gordura,
       metricas.musculo,
       metricas.agua,
-      0, // streak_calorias
+      0, // streak_caloria
       0, // streak_hidratacao
       metricas.calorias_consumido,
       metricas.calorias_meta,

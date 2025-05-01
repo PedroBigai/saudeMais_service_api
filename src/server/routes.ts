@@ -25,7 +25,7 @@ router.post("/cadastro", cadastrarUser); // FUNCIONANDO
 router.post("/login", loginController) // FUNCIONANDO
 
 router.get('/dados-usuario', verificarToken, getUserData); // FUNCIONANDO
-router.get("/data-atual", obterDataAtual);
+router.get("/data-atual", obterDataAtual); // FUNCIONANDO
 router.post("/update/:type", verificarToken, updateMetricsDataController); // FUNCIONANDO
 router.post("/updateUserData/:type", verificarToken, updateUserData); // FUNCIONANDO
 router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
