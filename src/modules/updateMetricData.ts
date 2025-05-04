@@ -7,7 +7,6 @@ export const updateMetricsData = async (
 ) => {
   const hoje = new Date().toISOString().split("T")[0];
 
-  // Verifica se já existe uma linha de métricas hoje
   const existente = await queryAsync(
     "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = CURDATE()",
     [usuarioId]
@@ -15,7 +14,6 @@ export const updateMetricsData = async (
 
   const id = existente.length > 0 ? existente[0].id : null;
 
-  // mapeia os tipos diretamente para colunas
   const colunasSimples = [
     "altura",
     "peso",
@@ -34,16 +32,38 @@ export const updateMetricsData = async (
   ];
 
   if (id) {
-    // UPDATE
     if (colunasSimples.includes(tipo)) {
       await queryAsync(
         `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
         [valor, id]
       );
     } else if (colunasJson.includes(tipo)) {
+      const resultado = await queryAsync(
+        `SELECT ${tipo} FROM metricas WHERE id = ?`,
+        [id]
+      );
+
+      let valorAntigo = {};
+
+      if (resultado.length > 0 && resultado[0][tipo]) {
+        const dadoBruto = resultado[0][tipo];
+        try {
+          valorAntigo = typeof dadoBruto === 'string'
+            ? JSON.parse(dadoBruto)
+            : dadoBruto;
+        } catch {
+          valorAntigo = {};
+        }
+      }
+
+      const valorAtualizado = {
+        ...valorAntigo,
+        ...valor
+      };
+
       await queryAsync(
         `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
-        [JSON.stringify(valor), id]
+        [JSON.stringify(valorAtualizado), id]
       );
     } else {
       return { mensagem: `Tipo de métrica '${tipo}' não reconhecido.` };
@@ -51,9 +71,9 @@ export const updateMetricsData = async (
 
     return { mensagem: `Métrica de ${tipo} atualizada.` };
   } else {
-    // INSERT novo com apenas essa métrica preenchida
-    let query = `INSERT INTO metricas (usuario_id, registrado_em, ${tipo}) VALUES (?, NOW(), ?)`;
     const valorFinal = colunasJson.includes(tipo) ? JSON.stringify(valor) : valor;
+
+    const query = `INSERT INTO metricas (usuario_id, registrado_em, ${tipo}) VALUES (?, NOW(), ?)`;
 
     await queryAsync(query, [usuarioId, valorFinal]);
 
