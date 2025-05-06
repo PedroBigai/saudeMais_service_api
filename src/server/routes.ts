@@ -9,6 +9,10 @@ import { obterDataAtual } from "../controllers/dateController";
 import { Request, Response, NextFunction } from "express";
 import { postChatSaudeMais } from "../controllers/postChatSaudeMais";
 import { updateUserData } from "../controllers/patchUserData";
+import { get } from "http";
+import { getAlimentosDieta } from "../controllers/getAlimentosDieta";
+import { postExercise } from "../controllers/postExercise";
+import { getExercise } from "../modules/getExercise";
 
 
 // Fake middleware para testes (substitui o verificarToken)
@@ -30,6 +34,10 @@ router.post("/update/:type", verificarToken, updateMetricsDataController); // FU
 router.post("/updateUserData/:type", verificarToken, updateUserData); // FUNCIONANDO
 router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
 
+router.get("/alimentos-dieta"), getAlimentosDieta; // FUNCIONANDO
+
+router.post("/createExercise", verificarToken, postExercise); // FUNCIONANDO
+router.get("/getExercises", verificarToken, getExercise); // FUNCIONANDO
 
 
 router.get("/", (req, res) => {
