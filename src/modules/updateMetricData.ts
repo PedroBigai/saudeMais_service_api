@@ -25,6 +25,8 @@ export const updateMetricsData = async (
     "calorias_meta",
     "hidratacao_consumido",
     "hidratacao_meta",
+    "streak_caloria",
+    "streak_hidratacao",
   ];
 
   const colunasJson = [
@@ -37,7 +39,56 @@ export const updateMetricsData = async (
         `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
         [valor, id]
       );
-    } else if (colunasJson.includes(tipo)) {
+    
+      if (tipo === "calorias_consumido" || tipo === "hidratacao_consumido") {
+        const dados = await queryAsync(
+          `SELECT calorias_consumido, calorias_meta, hidratacao_consumido, hidratacao_meta FROM metricas WHERE id = ?`,
+          [id]
+        );
+
+        const [m] = dados;
+
+        // Data de ontem
+        const ontem = new Date();
+        ontem.setDate(ontem.getDate() - 1);
+        const dataOntem = ontem.toISOString().split("T")[0];
+
+        // Busca o último registro antes de hoje
+        const [anterior] = await queryAsync(
+          `SELECT registrado_em, streak_caloria, streak_hidratacao
+           FROM metricas
+           WHERE usuario_id = ? AND DATE(registrado_em) < CURDATE()
+           ORDER BY registrado_em DESC
+           LIMIT 1`,
+          [usuarioId]
+        );
+
+        let streakAnteriorCalorias = 0;
+        let streakAnteriorHidratacao = 0;
+
+        const dataAnterior = anterior?.registrado_em?.toISOString?.().split("T")[0] ?? anterior?.registrado_em?.split("T")[0];
+
+        const registroFoiOntem = dataAnterior === dataOntem;
+
+        if (registroFoiOntem) {
+          streakAnteriorCalorias = anterior?.streak_caloria || 0;
+          streakAnteriorHidratacao = anterior?.streak_hidratacao || 0;
+        }
+
+        let novoStreakCalorias = m.calorias_consumido >= (m.calorias_meta - 100)
+          ? streakAnteriorCalorias + 1
+          : 0;
+
+        let novoStreakHidratacao = m.hidratacao_consumido >= (m.hidratacao_meta - 100)
+          ? streakAnteriorHidratacao + 1
+          : 0;
+
+        await queryAsync(
+          `UPDATE metricas SET streak_caloria = ?, streak_hidratacao = ? WHERE id = ?`,
+          [novoStreakCalorias, novoStreakHidratacao, id]
+        );
+      }
+    }else if (colunasJson.includes(tipo)) {
       const resultado = await queryAsync(
         `SELECT ${tipo} FROM metricas WHERE id = ?`,
         [id]

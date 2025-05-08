@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { loadDietaData } from "../modules/loadDietaData";
 
-export const getAlimentosDieta = async (req: Request, res: Response) => {
+export const getAlimentosDieta = async (req: Request, res: Response):Promise <any> => {
     try {
         const data = await loadDietaData();
     

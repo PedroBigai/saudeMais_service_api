@@ -51,18 +51,6 @@ export const updateMetricsTable = async (usuarioId: number) => {
     const metaHidratacaoNovo = calcularMetaHidratacao(u.peso);
     const metaCaloriaNovo = calcularMetaCalorica(u.peso, u.altura, u.sexo, u.objetivo, u.nascimento);
 
-    // calorias: permite consumir até 100 a menos da meta
-    let novoStreakCalorias = 0;
-    if (u.calorias_consumido != null && u.calorias_meta != null && u.calorias_consumido >= (u.calorias_meta - 100)) {
-      novoStreakCalorias = (u.streak_calorias || 0) + 1;
-    }
-
-    // hidratacao: também permite até 100 abaixo
-    let novoStreakHidratacao = 0;
-    if (u.hidratacao_consumido != null && u.hidratacao_meta != null && u.hidratacao_consumido >= (u.hidratacao_meta - 100)) {
-      novoStreakHidratacao = (u.streak_hidratacao || 0) + 1;
-    }
-
     await queryAsync(
       `
       INSERT INTO metricas (
@@ -83,8 +71,8 @@ export const updateMetricsTable = async (usuarioId: number) => {
         0,                // hidratacao_consumido zerado
         metaHidratacaoNovo,
         u.medidas_corporais,
-        novoStreakCalorias,
-        novoStreakHidratacao
+        u.streak_caloria,
+        u.streak_hidratacao,
       ]
     );
 

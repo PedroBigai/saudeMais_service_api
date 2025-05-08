@@ -16,10 +16,10 @@ import { getExercise } from "../modules/getExercise";
 
 
 // Fake middleware para testes (substitui o verificarToken)
-const mockToken = (req: Request, res: Response, next: NextFunction) => {
-    (req as any).usuarioId = 2; // Defina aqui o ID do usuário que quer simular
-    next();
-};
+// const mockToken = (req: Request, res: Response, next: NextFunction) => {
+//     (req as any).usuarioId = 4; // Defina aqui o ID do usuário que quer simular
+//     next();
+// };
   
 
 const router = Router();
@@ -34,7 +34,7 @@ router.post("/update/:type", verificarToken, updateMetricsDataController); // FU
 router.post("/updateUserData/:type", verificarToken, updateUserData); // FUNCIONANDO
 router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
 
-router.get("/alimentos-dieta"), getAlimentosDieta; // FUNCIONANDO
+router.get("/alimentos-dieta", getAlimentosDieta); // FUNCIONANDO
 
 router.post("/createExercise", verificarToken, postExercise); // FUNCIONANDO
 router.get("/getExercises", verificarToken, getExercise); // FUNCIONANDO
