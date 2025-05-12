@@ -13,6 +13,8 @@ import { get } from "http";
 import { getAlimentosDieta } from "../controllers/getAlimentosDieta";
 import { postExercise } from "../controllers/postExercise";
 import { getExercise } from "../modules/getExercise";
+import { getRefeicoes } from "../controllers/getRefeicoes";
+import { postRefeicaoAlimento } from "../controllers/postRefeicaoAlimento";
 
 
 // Fake middleware para testes (substitui o verificarToken)
@@ -35,6 +37,8 @@ router.post("/updateUserData/:type", verificarToken, updateUserData); // FUNCION
 router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
 
 router.get("/alimentos-dieta", getAlimentosDieta); // FUNCIONANDO
+router.get("/refeicoes/alimentos", verificarToken, getRefeicoes)
+router.post("/refeicoes/alimento", verificarToken, postRefeicaoAlimento) // FUNCIONANDO
 
 router.post("/createExercise", verificarToken, postExercise); // FUNCIONANDO
 router.get("/getExercises", verificarToken, getExercise); // FUNCIONANDO
