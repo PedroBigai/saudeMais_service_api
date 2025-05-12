@@ -59,8 +59,7 @@ export const updateMetricsTable = async (usuarioId: number) => {
         calorias_consumido, calorias_meta,
         hidratacao_consumido, hidratacao_meta,
         medidas_corporais,
-        streak_caloria, streak_hidratacao
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         usuarioId,
@@ -71,8 +70,6 @@ export const updateMetricsTable = async (usuarioId: number) => {
         0,                // hidratacao_consumido zerado
         metaHidratacaoNovo,
         u.medidas_corporais,
-        u.streak_caloria,
-        u.streak_hidratacao,
       ]
     );
 
