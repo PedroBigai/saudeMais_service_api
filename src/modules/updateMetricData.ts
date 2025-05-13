@@ -10,8 +10,8 @@ export const updateMetricsData = async (
   const hoje = fusoBrasil.toISOString().split("T")[0];
 
   const existente = await queryAsync(
-    "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = CURDATE()",
-    [usuarioId]
+    "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = ?",
+    [usuarioId, hoje]
   );
 
   const id = existente.length > 0 ? existente[0].id : null;
