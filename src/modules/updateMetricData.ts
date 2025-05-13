@@ -5,7 +5,9 @@ export const updateMetricsData = async (
   tipo: string,
   valor: any
 ) => {
-  const hoje = new Date().toISOString().split("T")[0];
+  const agora = new Date();
+  const fusoBrasil = new Date(agora.getTime() - 3 * 60 * 60 * 1000); // UTC-3
+  const hoje = fusoBrasil.toISOString().split("T")[0];
 
   const existente = await queryAsync(
     "SELECT id FROM metricas WHERE usuario_id = ? AND DATE(registrado_em) = CURDATE()",
@@ -67,7 +69,7 @@ export const updateMetricsData = async (
         const [m] = dados;
 
         // Data de ontem
-        const ontem = new Date();
+        const ontem = new Date(agora.getTime() - 3 * 60 * 60 * 1000); // base na hora do BR
         ontem.setDate(ontem.getDate() - 1);
         const dataOntem = ontem.toISOString().split("T")[0];
 
