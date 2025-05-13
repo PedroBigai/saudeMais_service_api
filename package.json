@@ -34,6 +34,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.0",
     "node-cron": "^3.0.3",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "uuid": "^11.1.0"
   }
 }

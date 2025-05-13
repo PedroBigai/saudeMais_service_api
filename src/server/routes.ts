@@ -19,7 +19,7 @@ import { postRefeicaoAlimento } from "../controllers/postRefeicaoAlimento";
 
 // Fake middleware para testes (substitui o verificarToken)
 const mockToken = (req: Request, res: Response, next: NextFunction) => {
-    (req as any).usuarioId = 4; // Defina aqui o ID do usuário que quer simular
+    (req as any).usuarioId = 9; // Defina aqui o ID do usuário que quer simular
     next();
 };
   

@@ -39,6 +39,24 @@ export const updateMetricsData = async (
         `UPDATE metricas SET ${tipo} = ? WHERE id = ?`,
         [valor, id]
       );
+
+      if (tipo === "peso" || tipo === "altura") {
+        const [dados] = await queryAsync(
+          `SELECT peso, altura FROM metricas WHERE id = ?`,
+          [id]
+        );
+
+        const peso = tipo === "peso" ? valor : dados.peso;
+        const altura = tipo === "altura" ? valor : dados.altura;
+
+        if (peso && altura) {
+          const imc = +(peso / ((altura / 100) ** 2)).toFixed(2); // Altura convertida de cm para metros
+          await queryAsync(
+            `UPDATE metricas SET imc = ? WHERE id = ?`,
+            [imc, id]
+          );
+        }
+      }
     
       if (tipo === "calorias_consumido" || tipo === "hidratacao_consumido") {
         const dados = await queryAsync(
@@ -75,13 +93,16 @@ export const updateMetricsData = async (
           streakAnteriorHidratacao = anterior?.streak_hidratacao || 0;
         }
 
-        let novoStreakCalorias = m.calorias_consumido >= (m.calorias_meta - 100)
+        const dentroDaMargem = (consumido: number, meta: number, margem = 100) =>
+          meta > 0 && consumido >= (meta - margem) && consumido <= (meta + margem);
+        
+        let novoStreakCalorias = dentroDaMargem(m.calorias_consumido, m.calorias_meta)
           ? streakAnteriorCalorias + 1
           : 0;
-
-        let novoStreakHidratacao = m.hidratacao_consumido >= (m.hidratacao_meta - 100)
+        
+        let novoStreakHidratacao = dentroDaMargem(m.hidratacao_consumido, m.hidratacao_meta)
           ? streakAnteriorHidratacao + 1
-          : 0;
+          : 0;        
 
         await queryAsync(
           `UPDATE metricas SET streak_caloria = ?, streak_hidratacao = ? WHERE id = ?`,

@@ -9,7 +9,6 @@ export const postExercise = async (req: AuthRequest, res: Response): Promise<any
     const exerciseData = {
         tipo: tipo,
         descricao: descricao,
-        duracao_minutos: duracao_minutos,
         data: data,
         criado_em: criado_em
     }
@@ -17,12 +16,8 @@ export const postExercise = async (req: AuthRequest, res: Response): Promise<any
     if (!usuarioId) {
         return res.status(400).send("ID de usuário inválido.");
     }
-    if (!tipo || !descricao || !duracao_minutos || !data) {
+    if (!tipo || !descricao || !data) {
         return res.status(400).send("Dados de exercício inválidos.");
-    }
-
-    if (typeof duracao_minutos !== "number") {
-        return res.status(400).send("Duração em minutos deve ser um número.");
     }
 
     if (tipo != 'aerobico' && tipo != 'forca' && tipo != 'mobilidade' && tipo != 'fortalecimento') {
