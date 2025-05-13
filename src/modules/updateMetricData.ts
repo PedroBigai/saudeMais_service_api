@@ -145,11 +145,16 @@ export const updateMetricsData = async (
 
     return { mensagem: `Métrica de ${tipo} atualizada.` };
   } else {
-    const valorFinal = colunasJson.includes(tipo) ? JSON.stringify(valor) : valor;
+        const valorFinal = colunasJson.includes(tipo) ? JSON.stringify(valor) : valor;
 
-    const query = `INSERT INTO metricas (usuario_id, registrado_em, ${tipo}) VALUES (?, NOW(), ?)`;
+        const dataHoraBrasil = new Date(Date.now() - 3 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " "); // yyyy-mm-dd hh:mm:ss
 
-    await queryAsync(query, [usuarioId, valorFinal]);
+    const query = `INSERT INTO metricas (usuario_id, registrado_em, ${tipo}) VALUES (?, ?, ?)`;
+    await queryAsync(query, [usuarioId, dataHoraBrasil, valorFinal]);
+
 
     return { mensagem: `Métrica de ${tipo} registrada.` };
   }
