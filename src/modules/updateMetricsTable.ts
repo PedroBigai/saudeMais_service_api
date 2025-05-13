@@ -58,7 +58,7 @@ export const updateMetricsTable = async (usuarioId: number) => {
         altura, peso, imc, gordura, musculo, agua,
         calorias_consumido, calorias_meta,
         hidratacao_consumido, hidratacao_meta,
-        medidas_corporais,
+        medidas_corporais
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [

@@ -38,10 +38,11 @@ router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
 
 router.get("/alimentos-dieta", getAlimentosDieta); // FUNCIONANDO
 router.get("/refeicoes/alimentos", verificarToken, getRefeicoes)
-router.post("/refeicoes/alimento", verificarToken, postRefeicaoAlimento) // FUNCIONANDO
+router.post("/refeicoes/alimento", verificarToken, postRefeicaoAlimento) 
 
 router.post("/createExercise", verificarToken, postExercise); // FUNCIONANDO
 router.get("/getExercises", verificarToken, getExercise); // FUNCIONANDO
+// router.put("/update/exercise", verificarToken, putExercise)
 
 
 router.get("/", (req, res) => {
