@@ -14,7 +14,7 @@ const safetySettings = [
 export const loadChatResponse = async (userId: number, mensagem: string): Promise<string> => {
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-pro",
+        model: "gemini-2.0-flash",    
         generationConfig: {
           maxOutputTokens: 200,
         },
@@ -22,6 +22,14 @@ export const loadChatResponse = async (userId: number, mensagem: string): Promis
       });
 
          const userData = await loadUserData(userId)
+         const finalUserMetricas = userData?.metricas[0]
+         
+         const finalUserData = {
+            dados_usuario: userData?.dados_usuario,
+            streak_caloria: userData?.streak_caloria || 0,
+            streak_hidratacao: userData?.streak_hidratacao || 0,
+            metricas: finalUserMetricas
+         }
          const dataAtual = new Date().toLocaleDateString("pt-BR", {
           timeZone: "America/Sao_Paulo"
         });
@@ -36,7 +44,7 @@ export const loadChatResponse = async (userId: number, mensagem: string): Promis
                 Data atual: ${dataAtual}
 
                 Esses aqui são os dados do usuário:
-                ${JSON.stringify(userData, null, 2)}
+                ${JSON.stringify(finalUserData, null, 2)}
                 const objetivos = {
                   1: "Perca de peso",
                   2: "Ganho de massa",
@@ -47,6 +55,7 @@ export const loadChatResponse = async (userId: number, mensagem: string): Promis
                 Seu papel é responder dúvidas de usuários sobre alimentação saudável, bem-estar, rotina de exercícios, sono, hidratação e outros temas relacionados à saúde de forma clara,
                 útil e gentil. 
                 Evite dar diagnósticos médicos, mas incentive hábitos saudáveis e, se necessário, recomende que o usuário procure um profissional da saúde.
+                Se a pergunta envolver dados pessoais como email ou telefone, informe que não é possível compartilhar essas informações.
                 Seja direto e claro nas suas respostas.`,
               },
             ],
