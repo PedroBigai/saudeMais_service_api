@@ -1,4 +1,5 @@
 import { queryAsync } from "./dbService";
+import { calcularIdade, calcularMetaCalorica, calcularMetaHidratacao } from "./setUser";
 
 export const updateMetricsData = async (
   usuarioId: number,
@@ -52,12 +53,32 @@ export const updateMetricsData = async (
         const altura = tipo === "altura" ? valor : dados.altura;
 
         if (peso && altura) {
-          const imc = +(peso / ((altura / 100) ** 2)).toFixed(2); // Altura convertida de cm para metros
+          const imc = +(peso / ((altura / 100) ** 2)).toFixed(2);
+
           await queryAsync(
             `UPDATE metricas SET imc = ? WHERE id = ?`,
             [imc, id]
           );
+
+          // 🔍 Buscar dados do usuário
+          const [usuario] = await queryAsync(
+            `SELECT sexo, data_nascimento, objetivo FROM usuarios WHERE id = ?`,
+            [usuarioId]
+          );
+
+          if (usuario) {
+            const { sexo, data_nascimento, objetivo } = usuario;
+
+            const novaMetaCalorica = calcularMetaCalorica(peso, altura, sexo, objetivo, data_nascimento);
+            const novaMetaHidratacao = calcularMetaHidratacao(peso);
+
+            await queryAsync(
+              `UPDATE metricas SET calorias_meta = ?, hidratacao_meta = ? WHERE id = ?`,
+              [novaMetaCalorica, novaMetaHidratacao, id]
+            );
+          }
         }
+
       }
     
       if (tipo === "calorias_consumido" || tipo === "hidratacao_consumido") {
