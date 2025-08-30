@@ -2,7 +2,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 import { loadUserData } from "./loadUserData";
 
 // API KEY (pode vir de .env também)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "SUA_CHAVE_AQUI");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyBf-CbefdcrB2pzbCWDMC5A4hYS9WpkPus");
 
 const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
