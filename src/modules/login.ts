@@ -7,7 +7,7 @@ export const login = async (email: string, senha: string) => {
   try {
     // Buscar o usuário no banco de dados pelo email
     const result = await queryAsync(
-      "SELECT id, email, senha_hash FROM usuarios WHERE email = ?",
+      "SELECT id, email, categoria, senha_hash FROM usuarios WHERE email = ?",
       [email]
     );
 
@@ -25,7 +25,7 @@ export const login = async (email: string, senha: string) => {
 
     // Gerar o token JWT
     const token = jwt.sign(
-      { id: usuario.id },
+      { id: usuario.id, categoria: usuario.categoria },
       process.env.JWT_SECRET || "secreta",
       { expiresIn: "1h" }
     );
