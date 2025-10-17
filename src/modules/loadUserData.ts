@@ -26,11 +26,11 @@ export interface Metricas {
     meta: number;
   };
   medidas_corporais: any;
-  streak_caloria: number
-  streak_hidratacao: number
+  streak_caloria: number;
+  streak_hidratacao: number;
 }
 
-export const loadUserData = async (usuarioId: number) => {
+export const loadUserData = async (usuarioId: number, categoria?: string) => {
   const query = `
     SELECT 
       u.nome, 
@@ -63,7 +63,6 @@ export const loadUserData = async (usuarioId: number) => {
 
   try {
     const results = await queryAsync(query, [usuarioId]);
-
     if (results.length === 0) return null;
 
     const row = results[0];
@@ -77,6 +76,12 @@ export const loadUserData = async (usuarioId: number) => {
       avatar: row.avatar,
     };
 
+    // 🧠 Se for professor, retorna só os dados pessoais
+    if (categoria === "professor") {
+      return { dados_usuario };
+    }
+
+    // 🧩 Caso contrário, monta e retorna tudo normalmente
     const metricas: Metricas[] = results.map((row: any) => ({
       registrado_em: row.registrado_em,
       altura: row.altura,
@@ -100,14 +105,13 @@ export const loadUserData = async (usuarioId: number) => {
       streak_caloria: row.streak_caloria,
       streak_hidratacao: row.streak_hidratacao,
     }));
-    
+
     return {
       dados_usuario,
       streak_caloria: row.streak_caloria || 0,
       streak_hidratacao: row.streak_hidratacao || 0,
       metricas,
     };
-
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
     throw new Error("Erro ao buscar dados do usuário.");

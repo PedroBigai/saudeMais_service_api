@@ -18,6 +18,7 @@ const DEV_ORIGINS = [
   "http://localhost:5501",
   "http://127.0.0.1:3001",
   "http://localhost:3001",
+  "http://localhost:8080",
 ];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, cb) => {

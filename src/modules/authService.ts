@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
-// Definindo o tipo para a Request que contém o campo usuarioId
-interface AuthRequest extends Request {
-  usuarioId?: number;
-}
+import { AuthRequest } from '../interfaces/AuthRequest';
 
 const verificarToken = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.headers["authorization"]?.split(" ")[1];
@@ -25,6 +21,7 @@ const verificarToken = (req: AuthRequest, res: Response, next: NextFunction): vo
 
     // Adiciona o usuário ID ao request para ser utilizado nas rotas
     req.usuarioId = (decoded as jwt.JwtPayload).id; // TypeScript precisa de type assertion
+    req.categoria = (decoded as jwt.JwtPayload).categoria; // Adiciona a categoria ao request
     next(); // Passa o controle para o próximo middleware ou a rota
   });
 };

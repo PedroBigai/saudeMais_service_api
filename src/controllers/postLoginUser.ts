@@ -2,10 +2,14 @@ import { Request, Response } from "express";
 import { login } from "../modules/login";
 
 // Controlador para realizar o login
-export const loginController = async (req: Request, res: Response) => {
+export const loginController = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, senha } = req.body;
     const token = await login(email, senha);  // Chama o serviço de login
+
+    if (!token) {
+      return res.status(401).send("Credenciais inválidas.");
+    }
     res.status(200).json({ token });
   } catch (error) {
     if (error instanceof Error) {

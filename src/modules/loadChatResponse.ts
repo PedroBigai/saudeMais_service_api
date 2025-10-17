@@ -22,7 +22,7 @@ export const loadChatResponse = async (userId: number, mensagem: string): Promis
       });
 
          const userData = await loadUserData(userId)
-         const finalUserMetricas = userData?.metricas[0]
+         const finalUserMetricas = userData?.metricas && userData.metricas.length > 0 ? userData.metricas[0] : undefined
          
          const finalUserData = {
             dados_usuario: userData?.dados_usuario,
