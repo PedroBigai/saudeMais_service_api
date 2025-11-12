@@ -1,6 +1,6 @@
 import { AuthRequest } from "../interfaces/AuthRequest";
 import { Response } from "express";
-import { loadExerciseData } from "./loadExerciseData";
+import { loadExerciseData } from "../modules/loadExerciseData";
 
 export const getExercise = async (req: AuthRequest, res: Response): Promise<any> => {
     const usuarioId = Number(req.usuarioId);

@@ -6,12 +6,12 @@ import { updateMetricsDataController } from "../controllers/patchMetricsData";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
 import { obterDataAtual } from "../controllers/dateController";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { postChatSaudeMais } from "../controllers/postChatSaudeMais";
 import { updateUserData } from "../controllers/patchUserData";
 import { getAlimentosDieta } from "../controllers/getAlimentosDieta";
 import { postExercise } from "../controllers/postExercise";
-import { getExercise } from "../modules/getExercise";
+import { getExercise } from "../controllers/getExercise";
 import { getRefeicoes } from "../controllers/getRefeicoes";
 import { postRefeicaoAlimento } from "../controllers/postRefeicaoAlimento";
 
@@ -22,6 +22,12 @@ import {
   passwordResetStatusController,
   passwordResetConfirmController,
 } from "../controllers/passwordResetController";
+import { getProfessorConnections } from "../controllers/getProfessorConnections";
+import { getAvailableConnections } from "../controllers/getAvailableConnections";
+import { postConnection } from "../controllers/postConnection";
+import { getProfessorConnectionsList } from "../controllers/getProfessorConnectionList";
+import { acessOnly } from "../modules/acessOnly";
+import { getManyUsersHealthData } from "../controllers/getManyUsersDataHealth";
 
 // Fake middleware para testes (substitui o verificarToken)
 const mockToken = (req: Request, res: Response, next: NextFunction) => {
@@ -58,6 +64,11 @@ router.post("/createExercise", verificarToken, postExercise); // FUNCIONANDO
 router.get("/getExercises", verificarToken, getExercise); // FUNCIONANDO
 // router.put("/update/exercise", verificarToken, putExercise)
 
+router.get("/professor/me/conexoes", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnections); // FUNCIONANDO
+router.get("/professor/avaiable/conexoes", verificarToken, acessOnly("professor") as RequestHandler, getAvailableConnections); // FUNCIONANDO 
+router.post("/professor/conectar/:alunoId", verificarToken, acessOnly("professor") as RequestHandler, postConnection)
+router.get("/professor/conectar/listar", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnectionsList  )
+router.get("/professor/dados-saude/alunos/:id", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
 // rota de saúde da API
 router.get("/", (req, res) => {
   res.json({ mensagem: "API funcionando corretamente! V1.0.0" });
