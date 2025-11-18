@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import { loadWeeklyDiet } from "../modules/loadWeeklyDiet";
+import { loadExerciciosData } from "../modules/loadExerciciosWeeklyData";
 
-export const getAlimentosDieta = async (req: Request, res: Response): Promise<any> => {
+export const getExerciciosData = async (req: Request, res: Response): Promise<any> => {
   try {
-    const weekLabel = req.params.weekLabel;
-    const userId = Number(req.params.userId); // <-- AQUI!
 
-    const data = await loadWeeklyDiet(userId, weekLabel);
+    const weekLabel = req.params.weekLabel;
+    const userId = Number(req.params.userId);
+
+    const data = await loadExerciciosData(userId, weekLabel);
 
     if (!data || (Array.isArray(data) && data.length === 0)) {
       return res.status(404).send("Nenhum dado encontrado para o usuário.");
