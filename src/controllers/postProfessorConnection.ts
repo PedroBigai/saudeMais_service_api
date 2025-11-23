@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { createRequestConnection } from "../modules/createRequestConnection";
 
-export const postConnection = async (req: Request, res: Response): Promise<any> => {
+export const postProfessorConnection = async (req: Request, res: Response): Promise<any> => {
   try {
     const professorId = (req as any).usuarioId;
     const { alunoId } = req.params;

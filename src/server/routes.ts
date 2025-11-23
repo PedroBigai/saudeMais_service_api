@@ -24,11 +24,13 @@ import {
 } from "../controllers/passwordResetController";
 import { getProfessorConnections } from "../controllers/getProfessorConnections";
 import { getAvailableConnections } from "../controllers/getAvailableConnections";
-import { postConnection } from "../controllers/postConnection";
+import { postProfessorConnection } from "../controllers/postProfessorConnection";
 import { getProfessorConnectionsList } from "../controllers/getProfessorConnectionList";
 import { acessOnly } from "../modules/acessOnly";
 import { getManyUsersHealthData } from "../controllers/getManyUsersDataHealth";
 import { getExerciciosData } from "../controllers/getExerciciosData";
+import { getAlunoConnections } from "../controllers/getAlunoConnections";
+import { postAlunoConnection } from "../controllers/postAlunoConnection";
 
 // Fake middleware para testes (substitui o verificarToken)
 const mockToken = (req: Request, res: Response, next: NextFunction) => {
@@ -67,13 +69,17 @@ router.get("/getExercises", verificarToken, getExercise); // FUNCIONANDO
 
 router.get("/professor/me/conexoes", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnections); // FUNCIONANDO
 router.get("/professor/avaiable/conexoes", verificarToken, acessOnly("professor") as RequestHandler, getAvailableConnections); // FUNCIONANDO 
-router.post("/professor/conectar/:alunoId", verificarToken, acessOnly("professor") as RequestHandler, postConnection)
-router.get("/professor/conectar/listar", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnectionsList  )
-router.get("/professor/dados-saude/alunos/:id", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
+router.post("/professor/conectar/:alunoId", verificarToken, acessOnly("professor") as RequestHandler, postProfessorConnection) // FUNCIONANDO
+router.get("/professor/conectar/listar", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnectionsList  ) // FUNCIONANDO
+router.get("/professor/dados-saude/alunos/:id?", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
+
+router.post("/professor/dados-saude/weekly-entries", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
 
 
-router.get("/alunos/:userId/dieta/:weekLabel",  getAlimentosDieta); // FUNCIONANDO
-router.get("/alunos/:userId/exercicio/:weekLabel",  getExerciciosData); // FUNCIONANDO
+router.get("/alunos/:userId/dieta/:weekLabel", verificarToken, getAlimentosDieta); // FUNCIONANDO
+router.get("/alunos/:userId/exercicio/:weekLabel", verificarToken, getExerciciosData); // FUNCIONANDO
+router.get("/alunos/me/conexoes", verificarToken, getAlunoConnections); // FUNCIONANDO
+router.post("/alunos/conexoes/:conexao_id/responder", verificarToken, postAlunoConnection) // FUNCIONANDO
 
 // rota de saúde da API
 router.get("/", (req, res) => {
