@@ -4,8 +4,8 @@ import { responseConnectionRequest } from "../modules/responseConnection";
 
 export const postAlunoConnection = async (req: Request, res: Response): Promise<any> => {
   try {
-    // const alunoId = Number((req as any).usuarioId);
-    const alunoId = 20;
+    const alunoId = Number((req as any).usuarioId);
+    // const alunoId = 20;
     const { conexao_id } = req.params;
     const { status } = req.body as { status?: "accepted" | "rejected" };
 

@@ -3,8 +3,8 @@ import { loadStudentConnection } from "../modules/loadAlunoConnections";
 
 export const getAlunoConnections = async (req: Request, res: Response): Promise<any> => {
   try {
-    // const alunoId = (req as any).usuarioId;
-    const alunoId = 20
+    const alunoId = (req as any).usuarioId;
+    // const alunoId = 20
     const loadConnections = await loadStudentConnection(alunoId);
     return res.status(200).json(loadConnections);
   } catch (error) {

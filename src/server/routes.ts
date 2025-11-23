@@ -76,8 +76,8 @@ router.get("/professor/dados-saude/alunos/:id?", verificarToken, acessOnly("prof
 router.post("/professor/dados-saude/weekly-entries", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
 
 
-router.get("/alunos/:userId/dieta/:weekLabel", verificarToken, getAlimentosDieta); // FUNCIONANDO
-router.get("/alunos/:userId/exercicio/:weekLabel", verificarToken, getExerciciosData); // FUNCIONANDO
+router.get("/alunos/:userId/dieta/:weekLabel", getAlimentosDieta); // FUNCIONANDO
+router.get("/alunos/:userId/exercicio/:weekLabel", getExerciciosData); // FUNCIONANDO
 router.get("/alunos/me/conexoes", verificarToken, getAlunoConnections); // FUNCIONANDO
 router.post("/alunos/conexoes/:conexao_id/responder", verificarToken, postAlunoConnection) // FUNCIONANDO
 
