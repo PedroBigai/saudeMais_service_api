@@ -1,0 +1,488 @@
+openapi: 3.0.1
+info:
+  title: SaudeMais API
+  version: 1.0.0
+  description: API para gerenciamento de usuários, métricas, exercícios, dietas, conexões entre professores e alunos e fluxo de recuperação de senha (OTP + sessão curta).
+servers:
+  - url: http://localhost:3000
+    description: Servidor local de desenvolvimento
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        error:
+          type: string
+    UserRegister:
+      type: object
+      required: [nome, email, senha]
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+        categoria:
+          type: string
+          description: Tipo do usuário (e.g. aluno | professor)
+        idade:
+          type: integer
+    LoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    ExerciseCreate:
+      type: object
+      required: [tipo, descricao, data]
+      properties:
+        tipo:
+          type: string
+          enum: [aerobico, forca, mobilidade, fortalecimento]
+        descricao:
+          type: string
+        duracao_minutos:
+          type: integer
+        data:
+          type: string
+          format: date-time
+        criado_em:
+          type: string
+          format: date-time
+    UpdateValue:
+      type: object
+      properties:
+        valor:
+          type: string
+    ChatMessage:
+      type: object
+      properties:
+        mensagem:
+          type: string
+    RefeicaoAlimentoPayload:
+      type: object
+      properties:
+        alimentoData:
+          type: object
+          description: Objeto com dados do alimento (formatos definidos pela aplicação)
+security:
+  - bearerAuth: []
+paths:
+  /:
+    get:
+      summary: Health check
+      description: Retorna mensagem de funcionamento da API
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    type: string
+  /verificar-email/{email}:
+    get:
+      summary: Verificar existência de e-mail
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retorna resultado da verificação
+  /cadastro:
+    post:
+      summary: Cadastrar novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '200':
+          description: Cadastro realizado
+        '400':
+          description: Validação falhou
+  /login:
+    post:
+      summary: Autenticar usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Retorna token JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciais inválidas
+  /password-reset/request:
+    post:
+      summary: Solicitar OTP de redefinição de senha (envia e-mail)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: OTP enviado (retorna expiresInSec)
+  /password-reset/verify:
+    post:
+      summary: Verificar OTP e abrir sessão curta (cookies)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, token]
+              properties:
+                email:
+                  type: string
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Sessão curta criada (cookies HttpOnly setados)
+  /password-reset/status:
+    get:
+      summary: Checar status da sessão de redefinição (retorna CSRF se presente)
+      responses:
+        '200':
+          description: Sessão válida e CSRF
+        '401':
+          description: Sessão ausente ou inválida
+  /password-reset/confirm:
+    post:
+      summary: Confirmar nova senha (requer cookie de sessão e X-CSRF-Token header)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [novaSenha]
+              properties:
+                novaSenha:
+                  type: string
+      parameters:
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Senha atualizada
+        '401':
+          description: Sessão inválida
+        '403':
+          description: Falha no CSRF
+  /dados-usuario:
+    get:
+      summary: Obter dados do usuário autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dados do usuário
+        '401':
+          description: Token ausente/ inválido
+  /data-atual:
+    get:
+      summary: Retorna data atual (utilitário)
+      responses:
+        '200':
+          description: Data atual
+  /update/{type}:
+    post:
+      summary: Atualizar métrica do usuário (e.g. peso, altura)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateValue'
+      responses:
+        '200':
+          description: Métrica atualizada
+  /updateUserData/{type}:
+    post:
+      summary: Atualizar dado pessoal do usuário
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateValue'
+      responses:
+        '200':
+          description: Dado atualizado
+  /chatSaudeMais:
+    post:
+      summary: Enviar mensagem para o chatbot/serviço de chat
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+      responses:
+        '200':
+          description: Resposta do chatbot
+        '429':
+          description: Rate limit (3 mensagens por minuto)
+  /alimentos-dieta:
+    get:
+      summary: (legacy) Obter alimentos da dieta — use /alunos/{userId}/dieta/{weekLabel}
+      responses:
+        '200':
+          description: Lista de alimentos
+  /alunos/{userId}/dieta/{weekLabel}:
+    get:
+      summary: Obter dieta semanal de um aluno
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: weekLabel
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dieta semanal do aluno
+        '404':
+          description: Não encontrado
+  /alunos/{userId}/exercicio/{weekLabel}:
+    get:
+      summary: Obter exercícios semanais de um aluno
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: weekLabel
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Exercícios semanais
+  /refeicoes/alimentos:
+    get:
+      summary: Obter refeições/alimentos (pode aceitar query param id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de refeições
+  /refeicoes/alimento:
+    post:
+      summary: Adicionar alimento a uma refeição
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefeicaoAlimentoPayload'
+      responses:
+        '200':
+          description: Alimento adicionado
+  /createExercise:
+    post:
+      summary: Criar dados de exercício para usuário autenticado
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExerciseCreate'
+      responses:
+        '200':
+          description: Criado com sucesso
+        '400':
+          description: Dados inválidos
+  /getExercises:
+    get:
+      summary: Obter exercícios do usuário autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de exercícios
+  /professor/me/conexoes:
+    get:
+      summary: Obter conexões do professor autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de conexões
+  /professor/avaiable/conexoes:
+    get:
+      summary: Listar alunos disponíveis para conexão
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de alunos disponíveis
+  /professor/conectar/{alunoId}:
+    post:
+      summary: Enviar solicitação de conexão para aluno
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: alunoId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Solicitação criada
+  /professor/conectar/listar:
+    get:
+      summary: Listar solicitações de conexão enviadas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de solicitações
+  /professor/dados-saude/alunos/{id}:
+    get:
+      summary: Obter dados de saúde de um ou todos os alunos conectados
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados de saúde
+  /professor/dados-saude/weekly-entries:
+    post:
+      summary: Obter entradas semanais agregadas (payload custom)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Dados agregados
+  /alunos/me/conexoes:
+    get:
+      summary: Obter conexões do aluno autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de conexões
+  /alunos/conexoes/{conexao_id}/responder:
+    post:
+      summary: Aluno responde solicitação de conexão
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: conexao_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [accepted, rejected]
+      responses:
+        '200':
+          description: Resposta registrada
+tags:
+  - name: auth
+  - name: users
+  - name: exercises
+  - name: diet
+  - name: professor
+  - name: aluno
+  - name: password-reset
+``` }``` (Note: create_file tool expects JSON; the tool call above was executed.)IBUTES. Please check file created. Apologies for inline note. }** (Your assistant has created the openapi.yaml file.)**. (Proceeding)
