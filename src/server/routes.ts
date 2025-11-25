@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { checkUserMail } from "../controllers/getCheckEmail";
 import { loginController } from "../controllers/postLoginUser";
 import verificarToken from "../modules/authService";
@@ -6,7 +7,6 @@ import { updateMetricsDataController } from "../controllers/patchMetricsData";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
 import { obterDataAtual } from "../controllers/dateController";
-import { Request, Response, NextFunction, RequestHandler } from "express";
 import { postChatSaudeMais } from "../controllers/postChatSaudeMais";
 import { updateUserData } from "../controllers/patchUserData";
 import { getAlimentosDieta } from "../controllers/getAlimentosDieta";
@@ -14,14 +14,6 @@ import { postExercise } from "../controllers/postExercise";
 import { getExercise } from "../controllers/getExercise";
 import { getRefeicoes } from "../controllers/getRefeicoes";
 import { postRefeicaoAlimento } from "../controllers/postRefeicaoAlimento";
-
-// === imports para reset de senha (OTP + sessão de redefinição) ===
-import {
-  requestPasswordResetController,
-  verifyPasswordResetController,
-  passwordResetStatusController,
-  passwordResetConfirmController,
-} from "../controllers/passwordResetController";
 import { getProfessorConnections } from "../controllers/getProfessorConnections";
 import { getAvailableConnections } from "../controllers/getAvailableConnections";
 import { postProfessorConnection } from "../controllers/postProfessorConnection";
@@ -31,6 +23,16 @@ import { getManyUsersHealthData } from "../controllers/getManyUsersDataHealth";
 import { getExerciciosData } from "../controllers/getExerciciosData";
 import { getAlunoConnections } from "../controllers/getAlunoConnections";
 import { postAlunoConnection } from "../controllers/postAlunoConnection";
+import { postWeeklyEntries } from "../controllers/postWeeklyEntries";
+
+// === imports para reset de senha (OTP + sessão de redefinição) ===
+import {
+  requestPasswordResetController,
+  verifyPasswordResetController,
+  passwordResetStatusController,
+  passwordResetConfirmController,
+} from "../controllers/passwordResetController";
+
 
 // Fake middleware para testes (substitui o verificarToken)
 const mockToken = (req: Request, res: Response, next: NextFunction) => {
@@ -73,7 +75,7 @@ router.post("/professor/conectar/:alunoId", verificarToken, acessOnly("professor
 router.get("/professor/conectar/listar", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnectionsList  ) // FUNCIONANDO
 router.get("/professor/dados-saude/alunos/:id?", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
 
-router.post("/professor/dados-saude/weekly-entries", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
+router.post("/professor/dados-saude/weekly-entries/:userId", verificarToken, acessOnly("professor") as RequestHandler, postWeeklyEntries); // FUNCIONANDO
 
 
 router.get("/alunos/:userId/dieta/:weekLabel", getAlimentosDieta); // FUNCIONANDO

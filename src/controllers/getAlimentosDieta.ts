@@ -6,6 +6,9 @@ export const getAlimentosDieta = async (req: Request, res: Response): Promise<an
     const weekLabel = req.params.weekLabel;
     const userId = Number(req.params.userId); // <-- AQUI!
 
+    console.log("userId recebido:", userId);
+    console.log("weekLabel recebido:", weekLabel);
+
     const data = await loadWeeklyDiet(userId, weekLabel);
 
     if (!data || (Array.isArray(data) && data.length === 0)) {
