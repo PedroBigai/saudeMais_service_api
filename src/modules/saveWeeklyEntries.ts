@@ -2,10 +2,22 @@ import { WeeklyEntry, Meal, Exercise } from "../interfaces/weeklyEntries";
 import pool from "../utils/database"; 
 
 const formatDateToSQL = (date: string | Date): string => {
-  // Se for objeto Date, converte para string ISO
   const dateStr = date instanceof Date ? date.toISOString() : date;
-  // Pega apenas a parte da data (2025-11-30) ignorando horas e timezones
   return dateStr.split('T')[0];
+};
+
+// --- FUNÇÃO QUE CALCULA A SEMANA DO ANO (1-53) ---
+const getWeekNumber = (dateInput: string | Date): number => {
+  const date = new Date(dateInput);
+  // Zera o horário para não dar erro de fuso
+  date.setUTCHours(0, 0, 0, 0);
+  // ISO 8601: A semana pertence ao ano que contém a Quinta-feira dessa semana
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+  // Primeiro dia do ano
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  // Cálculo da diferença de dias / 7
+  const weekNo = Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return weekNo;
 };
 
 export const saveWeeklyEntries = async (
@@ -24,15 +36,13 @@ export const saveWeeklyEntries = async (
 
     const weekStartDate = weeklyEntries[0].week_start_date;
 
-    // Limpar entradas antigas
+    // Limpar entradas antigas dessa semana específica
     const deleteQuery = `
       DELETE FROM weekly_entries 
       WHERE student_id = ? 
         AND week_start_date = ?;
     `;
     await connection.execute(deleteQuery, [studentId, weekStartDate]);
-
-    console.log("Iniciando inserção de novas entradas...");
 
     const insertQuery = `
       INSERT INTO weekly_entries (
@@ -47,10 +57,14 @@ export const saveWeeklyEntries = async (
     for (const entry of weeklyEntries) {
       const daysData = entry.data || []; 
 
+      // --- AQUI GERA O "S-48", "S-49", ETC ---
+      const weekNumber = getWeekNumber(entry.week_start_date);
+      const newWeekLabel = `S-${weekNumber}`; 
+      // ----------------------------------------
+      
       // Loop 2: Dias
       for (const dayItem of daysData) { 
         
-        // Define o que vamos inserir (Refeições ou Exercícios)
         let itemsToInsert: (Meal | Exercise)[] = [];
         
         if (entry.entry_type === 'diet' && dayItem.meals) {
@@ -59,10 +73,9 @@ export const saveWeeklyEntries = async (
             itemsToInsert = dayItem.exercises;
         }
 
-        // Loop 3: Itens (Refeição ou Exercício específico)
+        // Loop 3: Itens
         for (const actualItem of itemsToInsert) {
             
-            // Lógica de Título
             let title = actualItem.title;
             if (!title) {
                 title = entry.entry_type === 'diet' ? "Refeição sem título" : "Exercício sem título";
@@ -71,14 +84,14 @@ export const saveWeeklyEntries = async (
             const values = [
               studentId || null,
               professorId || null,
-              entry.week_label || null,
-              formatDateToSQL(entry.week_start_date), // TRATADO
-              formatDateToSQL(entry.week_end_date),   // TRATADO
-              formatDateToSQL(dayItem.entry_date),, // Data do dia correto
-              dayItem.weekday || null,    // Dia da semana correto
+              newWeekLabel, 
+              formatDateToSQL(entry.week_start_date),
+              formatDateToSQL(entry.week_end_date),
+              formatDateToSQL(dayItem.entry_date), // Corrigido: tinha ,, aqui
+              dayItem.weekday || null,
               entry.entry_type || null,
-              title || null,              // Título do item específico
-              JSON.stringify(actualItem) || null, // JSON do item específico
+              title || null,
+              JSON.stringify(actualItem) || null,
               now,
               now
             ];
@@ -89,7 +102,6 @@ export const saveWeeklyEntries = async (
     }
 
     await connection.commit();
-    console.log(`Semana de ${weekStartDate} salva com sucesso.`);
 
   } catch (error) {
     await connection.rollback();
