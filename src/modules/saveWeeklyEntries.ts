@@ -34,15 +34,16 @@ export const saveWeeklyEntries = async (
       throw new Error("Nenhuma entrada para salvar.");
     }
 
-    const weekStartDate = weeklyEntries[0].week_start_date;
-
+    const weekly_label = weeklyEntries[0].week_label;
     // Limpar entradas antigas dessa semana específica
     const deleteQuery = `
       DELETE FROM weekly_entries 
       WHERE student_id = ? 
-        AND week_start_date = ?;
+        AND week_label = ?;
     `;
-    await connection.execute(deleteQuery, [studentId, weekStartDate]);
+    
+    // Passamos o targetWeekLabel calculado
+    await connection.execute(deleteQuery, [studentId, weekly_label]);
 
     const insertQuery = `
       INSERT INTO weekly_entries (
