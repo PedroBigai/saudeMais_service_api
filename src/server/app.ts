@@ -25,7 +25,7 @@ const corsOptions: cors.CorsOptions = {
   origin: (origin, cb) => {
     // Permite ferramentas sem Origin (curl/Postman) e o próprio backend
     if (!origin) return cb(null, true);
-    if (DEV_ORIGINS.includes(origin) || origin.endsWith("danielhatz.com.br")) {
+    if (DEV_ORIGINS.includes(origin) || origin.endsWith("danielhatz.com.br") || origin === 'https://saude-mais-ui-professor.vercel.app') {
       return cb(null, true);
     }
     return cb(new Error("Not allowed by CORS"));
