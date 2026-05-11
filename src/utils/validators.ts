@@ -3,7 +3,7 @@
 // -------- Equivalentes do front --------
 export function validade_email(v: string): boolean {
   if (!v) return false;
-  // Padrão igual ao navegador <input type="email"> → só exige parte@parte
+  // Padrão igual ao navegador <input type="email"> → só exige parte@parte.
   const emailLike = /^[^\s@]+@[^\s@]+$/;
   return emailLike.test(v.trim());
 }

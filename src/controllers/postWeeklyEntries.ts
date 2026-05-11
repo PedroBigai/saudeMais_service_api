@@ -6,7 +6,7 @@ export const postWeeklyEntries = async (req: Request, res: Response): Promise<an
         const professorId = (req as any).usuarioId;  // ID do professor autenticado
         const alunoId = req.params.userId; // ID do aluno na URL
 
-        const { weeklyEntries } = req.body; // Estrutura recebida
+        const { weeklyEntries } = req.body; // Estrutura recebida.
 
         // Validação para garantir que weeklyEntries não está vazio
         if (!weeklyEntries || weeklyEntries.length === 0) {

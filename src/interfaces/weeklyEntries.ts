@@ -12,7 +12,7 @@ export interface Meal {
   alimentos: { nome: string; quantidade_g: string }[];
 }
 
-// Exercise - Exercício individual
+// Exercise - Exercício individual.
 export interface Exercise {
   id: string;
   title: string;
