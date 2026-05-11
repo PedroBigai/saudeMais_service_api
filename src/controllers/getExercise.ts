@@ -10,7 +10,7 @@ export const getExercise = async (req: AuthRequest, res: Response): Promise<any>
     }
 
     try {
-        const data = await loadExerciseData(usuarioId); // Função para carregar os dados de exercícios do usuário
+        const data = await loadExerciseData(usuarioId); // Função para scarregar os dados de exercícios do usuário
 
         if (!data) {
             return res.status(404).send("Nenhum dado encontrado para o usuário.");

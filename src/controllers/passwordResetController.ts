@@ -5,7 +5,7 @@ import { getUserIdByEmail, updateUserPassword } from "../modules/users";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
-const RESET_TTL_MS = 10 * 60 * 1000; // 10 minutos (sessão curta para redefinição)
+const RESET_TTL_MS = 10 * 60 * 1000; // 10 minutos (sessão curta para redefinição).
 const isProd = process.env.NODE_ENV === "production";
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
 

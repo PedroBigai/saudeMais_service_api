@@ -4,7 +4,7 @@ import { loadWeeklyDiet } from "../modules/loadWeeklyDiet";
 export const getAlimentosDieta = async (req: Request, res: Response): Promise<any> => {
   try {
     const weekLabel = req.params.weekLabel;
-    const userId = Number(req.params.userId); // <-- AQUI!
+    const userId = Number(req.params.userId); // <-- AQUIi!
 
     const data = await loadWeeklyDiet(userId, weekLabel);
 

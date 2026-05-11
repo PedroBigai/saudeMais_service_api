@@ -4,7 +4,7 @@ export async function sendMailPasswordReset(to: string, code: string): Promise<b
   try {
     let transporter;
 
-    // Se for modo Ethereal, cria uma conta de teste automaticamente
+    // Se for modo Ethereal, cria uma conta de teste automaticamente.
     if (process.env.SMTP_HOST === "ethereal") {
       const testAccount = await nodemailer.createTestAccount();
       transporter = nodemailer.createTransport({

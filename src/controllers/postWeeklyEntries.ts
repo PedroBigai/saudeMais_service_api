@@ -13,7 +13,7 @@ export const postWeeklyEntries = async (req: Request, res: Response): Promise<an
             return res.status(400).json({ message: "weeklyEntries deve ser um array não vazio" });
         }
 
-        // Chama a função que salva as entradas semanais no banco
+        // Chama a função que salva as entradas semanais no banco.
         await saveWeeklyEntries(weeklyEntries, professorId, Number(alunoId));
 
         // Resposta de sucesso

@@ -43,7 +43,7 @@ export const loadUsersHealthData = async (userIds: number[]) => {
 
     const [rows]: any = await pool.query(query, userIds);
 
-    // agora já convertemos para o formato do FRONT (DailyMetrics)
+    // agora já convertemos para o formato do FRONT (DailyMetrics).
     const today = new Date().toISOString().slice(0, 10);
 
     const data = rows.map((row: any) => ({

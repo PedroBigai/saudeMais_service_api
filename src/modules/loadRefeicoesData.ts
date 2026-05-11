@@ -34,7 +34,7 @@ export const loadRefeicoesData = async (id: string): Promise<any> => {
 
         // const [rows] = await connection.query(query, [id]);
         // if (rows.length === 0) {
-        //     return null;
+        //     return null;.
         // }
         // return rows;
         return refeicoesMock;
