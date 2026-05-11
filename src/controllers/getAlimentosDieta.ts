@@ -3,8 +3,13 @@ import { loadWeeklyDiet } from "../modules/loadWeeklyDiet";
 
 export const getAlimentosDieta = async (req: Request, res: Response): Promise<any> => {
   try {
-    const weekLabel = req.params.weekLabel;
+    const weekLabelParam = req.params.weekLabel;
+    const weekLabel = Array.isArray(weekLabelParam) ? weekLabelParam[0] : weekLabelParam;
     const userId = Number(req.params.userId); // <-- AQUI!
+
+    if (!weekLabel) {
+      return res.status(400).send("Parâmetros obrigatórios ausentes.");
+    }
 
     const data = await loadWeeklyDiet(userId, weekLabel);
 

@@ -4,10 +4,15 @@ import { loadRefeicoesData } from "../modules/loadRefeicoesData";
 
 
 export const getRefeicoes = async (req: AuthRequest, res: Response): Promise<any> => {
-    const { id } = req.params;
+    const idParam = req.params.id;
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
     const usuarioId = req.usuarioId;
 
     try {
+        if (!id) {
+            return res.status(400).send("Parâmetros obrigatórios ausentes.");
+        }
+
         const refeicoes = await loadRefeicoesData(id);
 
         if (!refeicoes) {

@@ -3,7 +3,8 @@ import { updateMetricsData } from "../modules/updateMetricData";
 import { AuthRequest } from "../interfaces/AuthRequest";
 
 export const updateMetricsDataController = async (req: AuthRequest, res: Response):Promise<any> => {
-  const { type } = req.params;
+  const typeParam = req.params.type;
+  const type = Array.isArray(typeParam) ? typeParam[0] : typeParam;
   const { valor } = req.body;
   const usuarioId = Number(req.usuarioId);
 

@@ -4,8 +4,13 @@ import { loadExerciciosData } from "../modules/loadExerciciosWeeklyData";
 export const getExerciciosData = async (req: Request, res: Response): Promise<any> => {
   try {
 
-    const weekLabel = req.params.weekLabel;
+    const weekLabelParam = req.params.weekLabel;
+    const weekLabel = Array.isArray(weekLabelParam) ? weekLabelParam[0] : weekLabelParam;
     const userId = Number(req.params.userId);
+
+    if (!weekLabel) {
+      return res.status(400).send("Parâmetros obrigatórios ausentes.");
+    }
 
     const data = await loadExerciciosData(userId, weekLabel);
 

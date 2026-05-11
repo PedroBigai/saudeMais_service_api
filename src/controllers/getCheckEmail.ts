@@ -3,7 +3,13 @@ import { verifyEmail } from "../modules/verifyEmail";
 
 export const checkUserMail = async (req: Request, res: Response) => {
   try {
-    const { email } = req.params;
+    const emailParam = req.params.email;
+    const email = Array.isArray(emailParam) ? emailParam[0] : emailParam;
+
+    if (!email) {
+      return res.status(400).send("Parâmetros obrigatórios ausentes.");
+    }
+
     const disponivel = await verifyEmail(email);  // Chama o serviço
 
     if (disponivel) {
