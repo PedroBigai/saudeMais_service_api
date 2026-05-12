@@ -25,7 +25,7 @@ import { getAlunoConnections } from "../controllers/getAlunoConnections";
 import { postAlunoConnection } from "../controllers/postAlunoConnection";
 import { postWeeklyEntries } from "../controllers/postWeeklyEntries";
 
-// === imports para reset de senha (OTP + sessão de redefinição) ===
+// === imports para reset de senha (OTP + sessão de redefinição). ===
 import {
   requestPasswordResetController,
   verifyPasswordResetController,

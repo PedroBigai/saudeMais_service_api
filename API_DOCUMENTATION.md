@@ -192,4 +192,4 @@ Se quiser, eu:
 - gero a coleção Postman,
 - ou converso contigo sobre as inconsistências e corrijo as rotas no código (se quiser que eu proponha mudanças no código, eu posso abrir um PR com as correções).
 
-Diga qual próximo passo prefere: "detalhar schemas" | "gerar Postman" | "corrigir rotas" | "finalizar".
+Diga qual próximo passo prefere: "detalhar schemas" | "gerar Postman" | "corrigir rotas" | "finalizar"

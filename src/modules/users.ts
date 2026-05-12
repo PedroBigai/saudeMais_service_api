@@ -20,7 +20,7 @@ export async function updateUserPassword(userId: number, novaSenha: string): Pro
      WHERE id = ?
   `;
 
-  // NÃO desestruture em array; queryAsync retorna um objeto (OkPacket/ResultSetHeader)
+  // NÃO desestruture em array; queryAsync retorna um objeto (OkPacket/ResultSetHeader).
   const result: any = await queryAsync(sql, [hash, userId]);
 
   // mysql2 retorna { affectedRows, changedRows, … } em UPDATE

@@ -20,7 +20,7 @@ export const getUserData = async (req: AuthRequest, res: Response): Promise<any>
       }
       return res.status(200).send(data);
     }
-    await updateMetricsTable(usuarioId); // Atualiza a tabela de métricas para o usuário
+    await updateMetricsTable(usuarioId); // Atualiza a tabela de métricas para o usuário.
     const data = await loadUserData(usuarioId);
 
     if (!data) {

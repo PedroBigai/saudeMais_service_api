@@ -17,7 +17,7 @@ export const postChatSaudeMais = async (req: AuthRequest, res: Response): Promis
   const intervalo = 60 * 1000; // 1 minuto
   const maxMensagens = 3;
 
-  // Se o usuário ainda não está no objeto, inicializa
+  // Se o usuário ainda não está no objeto, inicializa.
   if (!limiteUsuarios[usuarioId]) {
     limiteUsuarios[usuarioId] = { timestamps: [] };
   }

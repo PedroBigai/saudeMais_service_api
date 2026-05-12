@@ -29,7 +29,7 @@ export const postAlunoConnection = async (req: Request, res: Response): Promise<
     const result = await responseConnectionRequest(
       conexaoIdNum,
       alunoId,
-      alunoId, // responded_by
+      alunoId, // responded_by.
       status
     );
 

@@ -6,14 +6,14 @@ export const postWeeklyEntries = async (req: Request, res: Response): Promise<an
         const professorId = (req as any).usuarioId;  // ID do professor autenticado
         const alunoId = req.params.userId; // ID do aluno na URL
 
-        const { weeklyEntries } = req.body; // Estrutura recebida
+        const { weeklyEntries } = req.body; // Estrutura recebida.
 
         // Validação para garantir que weeklyEntries não está vazio
         if (!weeklyEntries || weeklyEntries.length === 0) {
             return res.status(400).json({ message: "weeklyEntries deve ser um array não vazio" });
         }
 
-        // Chama a função que salva as entradas semanais no banco
+        // Chama a função que salva as entradas semanais no banco.
         await saveWeeklyEntries(weeklyEntries, professorId, Number(alunoId));
 
         // Resposta de sucesso

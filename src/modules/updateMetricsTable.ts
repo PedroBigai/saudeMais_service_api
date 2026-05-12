@@ -67,7 +67,7 @@ export const updateMetricsTable = async (usuarioId: number) => {
         u.altura, u.peso, imcNovo, u.gordura, u.musculo, u.agua,
         0,                // calorias_consumido zerado
         metaCaloriaNovo,  // nova meta
-        0,                // hidratacao_consumido zerado
+        0,                // hidratacao_consumido zerado.
         metaHidratacaoNovo,
         u.medidas_corporais,
       ]

@@ -58,7 +58,7 @@ class OtpStore {
     return { ok: true, kind: "new", code, expiresAt };
   }
 
-  /** Fase 2a (pós-envio OK): salva novo OTP. */
+  /** Fase 2a (pós-envio OK): salva novo OTP */
   saveNew(email: string, code: string, expiresAt: number): void {
     this.map.set(this.key(email), {
       code,

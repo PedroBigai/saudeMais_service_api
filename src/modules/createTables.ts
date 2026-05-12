@@ -19,7 +19,7 @@ export async function createTables() {
       );
     `)
 
-    // Tabela metricas
+    // Tabela metricas.
     await pool.query(`
       CREATE TABLE IF NOT EXISTS metricas (
       id INT AUTO_INCREMENT PRIMARY KEY,

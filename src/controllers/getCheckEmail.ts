@@ -14,7 +14,7 @@ export const checkUserMail = async (req: Request, res: Response) => {
 
     if (disponivel) {
       // Email disponível
-      res.status(200).send({ disponivel }); // Código 200 OK é mais apropriado para uma resposta bem-sucedida
+      res.status(200).send({ disponivel }); // Código 200 OK é mais apropriado para uma resposta bem-sucedida.
     } else {
       // Email não disponível
       res.status(409).send({ disponivel }); // Código 409 Conflict indica que o email já está em uso

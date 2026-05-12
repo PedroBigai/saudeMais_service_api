@@ -66,7 +66,7 @@ export const setUser = async ({
       return { success: false, message: "E-mail já cadastrado." }
     }
 
-    // Criptografa a senha
+    // Criptografa a senha.
     const hashedPassword = await bcrypt.hash(senha, 10)
 
     // Insere usuário
