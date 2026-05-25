@@ -1,0 +1,25 @@
+weekday,title,time,calories,carbs_g,protein_g,fat_g,descricao,image_url,alimento_nome,alimento_quantidade_g
+1,Café da Manhã,07:00,350,45,22,10,Refeição inicial do dia,,Ovo,100
+1,Café da Manhã,07:00,350,45,22,10,Refeição inicial do dia,,Pão integral,60
+1,Almoço,12:00,650,80,45,18,Refeição principal do dia,,Arroz,120
+1,Almoço,12:00,650,80,45,18,Refeição principal do dia,,Frango grelhado,150
+1,Café da Tarde,16:00,280,38,14,8,Lanche intermediário da tarde,,Iogurte natural,170
+1,Café da Tarde,16:00,280,38,14,8,Lanche intermediário da tarde,,Banana,80
+1,Jantar,20:00,520,45,38,18,Refeição noturna equilibrada,,Salmão,140
+1,Jantar,20:00,520,45,38,18,Refeição noturna equilibrada,,Brócolis,90
+2,Café da Manhã,07:00,330,50,18,8,Refeição inicial do dia,,Aveia,50
+2,Café da Manhã,07:00,330,50,18,8,Refeição inicial do dia,,Leite,200
+2,Almoço,12:00,620,75,42,16,Refeição principal do dia,,Macarrão integral,130
+2,Almoço,12:00,620,75,42,16,Refeição principal do dia,,Carne moída magra,130
+2,Café da Tarde,16:00,260,35,12,7,Lanche intermediário da tarde,,Pão integral,50
+2,Café da Tarde,16:00,260,35,12,7,Lanche intermediário da tarde,,Queijo branco,40
+2,Jantar,20:00,500,50,35,14,Refeição noturna equilibrada,,Batata doce,150
+2,Jantar,20:00,500,50,35,14,Refeição noturna equilibrada,,Frango desfiado,130
+3,Café da Manhã,07:00,340,42,24,9,Refeição inicial do dia,,Tapioca,70
+3,Café da Manhã,07:00,340,42,24,9,Refeição inicial do dia,,Ovo,100
+3,Almoço,12:00,640,78,43,17,Refeição principal do dia,,Arroz integral,120
+3,Almoço,12:00,640,78,43,17,Refeição principal do dia,,Feijão,100
+3,Café da Tarde,16:00,270,40,13,6,Lanche intermediário da tarde,,Maçã,120
+3,Café da Tarde,16:00,270,40,13,6,Lanche intermediário da tarde,,Pasta de amendoim,20
+3,Jantar,20:00,510,42,40,16,Refeição noturna equilibrada,,Tilápia,150
+3,Jantar,20:00,510,42,40,16,Refeição noturna equilibrada,,Legumes,120

@@ -1,0 +1,7 @@
+weekday,title,muscle_group,sets,reps,weight,rest_seconds,distance_km,time_minutes,descricao,image_url
+1,Supino reto,peito,4,10,40,90,,,Peito com barra,https://exemplo.com/supino.jpg
+1,Esteira,cardio,,,,,5,30,Cardio moderado,https://exemplo.com/esteira.jpg
+2,Agachamento,pernas,4,12,50,120,,,Treino de pernas,https://exemplo.com/agachamento.jpg
+3,Remada curvada,costas,4,10,35,90,,,Costas com barra,https://exemplo.com/remada.jpg
+4,Prancha,core,,,,,0,3,Estabilização do core,https://exemplo.com/prancha.jpg
+5,Desenvolvimento com halteres,ombros,3,12,16,75,,,Ombros com foco em controle,https://exemplo.com/ombros.jpg

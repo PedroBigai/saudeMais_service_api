@@ -8,7 +8,7 @@ export const loginController = async (req: Request, res: Response): Promise<any>
     const token = await login(email, senha);  // Chama o serviço de login
 
     if (!token) {
-      return res.status(401).send("Credenciais inválidas.");
+      return res.status(401).send("E-mail ou senha inválidos.");
     }
     res.status(200).json({ token });
   } catch (error) {

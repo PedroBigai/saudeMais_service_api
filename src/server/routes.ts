@@ -7,7 +7,8 @@ import { updateMetricsDataController } from "../controllers/patchMetricsData";
 import { cadastrarUser } from "../controllers/postNewUser";
 import { getUserData } from "../controllers/getUserData";
 import { obterDataAtual } from "../controllers/dateController";
-import { postChatSaudeMais } from "../controllers/postChatSaudeMais";
+import { postStudentChatSaudeMais } from "../controllers/postStudentChatSaudeMais";
+import { getChatSaudeMaisStatusController } from "../controllers/getChatSaudeMaisStatus";
 import { updateUserData } from "../controllers/patchUserData";
 import { getAlimentosDieta } from "../controllers/getAlimentosDieta";
 import { postExercise } from "../controllers/postExercise";
@@ -18,6 +19,7 @@ import { getProfessorConnections } from "../controllers/getProfessorConnections"
 import { getAvailableConnections } from "../controllers/getAvailableConnections";
 import { postProfessorConnection } from "../controllers/postProfessorConnection";
 import { getProfessorConnectionsList } from "../controllers/getProfessorConnectionList";
+import { postGenerateStudentPlanCsv } from "../controllers/postGenerateStudentPlanCsv";
 import { acessOnly } from "../modules/acessOnly";
 import { getManyUsersHealthData } from "../controllers/getManyUsersDataHealth";
 import { getExerciciosData } from "../controllers/getExerciciosData";
@@ -36,7 +38,12 @@ import {
 
 // Fake middleware para testes (substitui o verificarToken)
 const mockToken = (req: Request, res: Response, next: NextFunction) => {
-  (req as any).usuarioId = 9; // Defina aqui o ID do usuário que quer simular
+  (req as any).usuarioId = 28; // Defina aqui o ID do usuário que quer simular
+  next();
+};
+
+const mockTokenProfessor = (req: Request, res: Response, next: NextFunction) => {
+  (req as any).usuarioId = 26; // Defina aqui o ID do usuário que quer simular
   next();
 };
 
@@ -59,7 +66,13 @@ router.get("/dados-usuario", verificarToken, getUserData); // FUNCIONANDO
 router.get("/data-atual", obterDataAtual); // FUNCIONANDO
 router.post("/update/:type", verificarToken, updateMetricsDataController); // FUNCIONANDO
 router.post("/updateUserData/:type", verificarToken, updateUserData); // FUNCIONANDO
-router.post("/chatSaudeMais", verificarToken, postChatSaudeMais); // FUNCIONANDO
+
+router.get("/chatSaudeMais/status",
+  verificarToken,
+  getChatSaudeMaisStatusController);
+router.post("/chatSaudeMais", 
+  verificarToken, 
+  postStudentChatSaudeMais); // FUNCIONANDO
 
 router.get("/alimentos-dieta", getAlimentosDieta); // FUNCIONANDO
 router.get("/refeicoes/alimentos", verificarToken, getRefeicoes);
@@ -74,6 +87,11 @@ router.get("/professor/avaiable/conexoes", verificarToken, acessOnly("professor"
 router.post("/professor/conectar/:alunoId", verificarToken, acessOnly("professor") as RequestHandler, postProfessorConnection) // FUNCIONANDO
 router.get("/professor/conectar/listar", verificarToken, acessOnly("professor") as RequestHandler, getProfessorConnectionsList  ) // FUNCIONANDO
 router.get("/professor/dados-saude/alunos/:id?", verificarToken, acessOnly("professor") as RequestHandler, getManyUsersHealthData); // FUNCIONANDO
+
+router.post("/professor/alunos/:alunoId/gerar-plano-csv", 
+  verificarToken, 
+  acessOnly("professor"),
+  postGenerateStudentPlanCsv);
 
 router.post("/professor/dados-saude/weekly-entries/:userId", verificarToken, acessOnly("professor") as RequestHandler, postWeeklyEntries); // FUNCIONANDO
 
