@@ -72,7 +72,7 @@ router.get("/chatSaudeMais/status",
   getChatSaudeMaisStatusController);
 router.post("/chatSaudeMais", 
   verificarToken, 
-  postStudentChatSaudeMais); // FUNCIONANDO
+  postStudentChatSaudeMais); 
 
 router.get("/alimentos-dieta", getAlimentosDieta); // FUNCIONANDO
 router.get("/refeicoes/alimentos", verificarToken, getRefeicoes);
